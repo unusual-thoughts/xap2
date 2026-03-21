@@ -28,7 +28,7 @@
   </data_organization>
 
   <global>
-      <!--<range space="code"/>-->
+    <range space="code"/>
     <range space="mem"/>
   </global>
 
