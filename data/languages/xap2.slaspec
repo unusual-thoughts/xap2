@@ -5,9 +5,15 @@ define space code     type=ram_space      size=3 wordsize=2 default;
 define space register type=register_space size=2;
 define space mem      type=ram_space      size=3 wordsize=2;
 
-define register offset=0x0 size=4 [ a x flags ];
-define register offset=0x0 size=2 [ ah al xh xl y pc lr ];
-define register offset=0x8 size=1 [ c s n z ];
+define register offset=0x0 size=4 [ a     x                   ];
+define register offset=0x0 size=2 [ ah al xh xl y pc lr flags ];
+
+define bitrange
+    z=flags[0,1]
+    n=flags[1,1]
+    c=flags[2,1]
+    s=flags[3,1]
+;
 
 define register offset=0x100 size=4 contextreg;
 
@@ -37,8 +43,8 @@ define token opc (16)
 
 attach variables [ f_reg ] [ ah al xl y ];
 attach variables [ f_mode ] [ _ _ xl y ];
-attach variables [ f_ld ] [ _ _ _ _ _ _ xl y _ _ _ _ _ _ xh _ ];
-attach variables [ f_st ] [ _ _ xl y _ _ _ _ _ _ xh _ _ _ _ _ ];
+attach variables [ f_ld ] [ _ _ _ _ _ flags xl y _ _ _ _ _ _ xh _ ];
+attach variables [ f_st ] [ _ flags xl y _ _ _ _ _ _ xh _ _ _ _ _ ];
 
 uimmval: val                is f_opnd & ext
 [ val = f_opnd + (ext << 8); ]
@@ -124,6 +130,16 @@ macro csnzflags(op1, op2, value) {
 
 :nop is f_all=0 {}
 :sleep is f_opc=0 & f_right=8 & f_opnd=0 {}
+# Breakpoint
+:brk is f_opc=0 & f_right=4 & f_opnd=0 {}
+# Perform SIF (serial interface) cycle
+:sif is f_opc=0 & f_right=0xc & f_opnd=0 {}
+# Return from interrupt
+:rti is f_opc=0 & f_right=0xd {}
+
+:ld f_ld, data is f_opc=0 & f_ld & f_right=5 & data {
+    f_ld = data;
+}
 
 :ld f_ld, data is f_opc=0 & f_ld & f_mid=3 & data {
     f_ld = data;
@@ -133,6 +149,10 @@ macro csnzflags(op1, op2, value) {
 :ld f_reg, data is f_opc=1 & f_reg & data {
     f_reg = data;
     nzflags(f_reg);
+}
+
+:st f_st, data is f_opc=0 & f_right=1 & f_st & data {
+    f_st = data;
 }
 
 :st f_st, data is f_opc=0 & f_st & f_mid=1 & data {
