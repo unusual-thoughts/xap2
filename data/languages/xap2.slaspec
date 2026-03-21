@@ -130,6 +130,12 @@ macro csnzflags(op1, op2, value) {
 
 :nop is f_all=0 {}
 :sleep is f_opc=0 & f_right=8 & f_opnd=0 {}
+# Breakpoint
+:brk is f_opc=0 & f_right=4 & f_opnd=0 {}
+# Perform SIF (serial interface) cycle
+:sif is f_opc=0 & f_right=0xc & f_opnd=0 {}
+# Return from interrupt
+:rti is f_opc=0 & f_right=0xd {}
 
 :ld f_ld, data is f_opc=0 & f_ld & f_right=5 & data {
     f_ld = data;
