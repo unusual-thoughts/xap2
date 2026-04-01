@@ -112,11 +112,26 @@ macro nzflags(value) {
     z = value == 0;
 }
 
-macro csnzflags(op1, op2, value) {
- c = carry(op1, op2);
- n = value s< 0;
- s = value s< 0;
- z = value == 0;
+macro addflags(op1, op2, value) {
+    c = carry(op1, op2);
+    n = value s< 0;
+    s = (value s< 0) ^^ scarry(op1, op2);
+    z = value == 0;
+}
+
+macro subflags(op1, op2, value) {
+    c = op1 < op2;
+    n = value s< 0;
+    s = (value s< 0) ^^ sborrow(op1, op2);
+    z = value == 0;
+}
+
+macro shiftflags(shifted_out, value) {
+    c = shifted_out;
+    # not sure if those flags are actually set
+    n = value s< 0;
+    s = n;
+    z = value == 0;
 }
 
 :^instruction is (f_byte=0 & f_sopnd); instruction
@@ -172,54 +187,54 @@ macro csnzflags(op1, op2, value) {
 :add f_reg, data is f_opc=3 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg + data;
-    csnzflags(tmp, data, f_reg);
+    addflags(tmp, data, f_reg);
 }
 
 :addc f_reg, data is f_opc=4 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg + data + zext(c);
-    csnzflags(tmp, data, f_reg);
+    addflags(tmp, data, f_reg);
 }
 
 :sub f_reg, data is f_opc=5 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg - data;
-    csnzflags(tmp, data, f_reg);
+    subflags(tmp, data, f_reg);
 }
 
 :subc f_reg, data is f_opc=6 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg - data - zext(c);
-    csnzflags(tmp, data, f_reg);
+    subflags(tmp, data, f_reg);
 }
 
 :nadd f_reg, data is f_opc=7 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = -f_reg + data;
-    csnzflags(tmp, data, f_reg);
+    subflags(tmp, data, f_reg);
 }
 
 :cmp f_reg, data is f_opc=8 & f_reg & data {
     local tmp:2 = f_reg - data;
-    csnzflags(f_reg, data, tmp);
+    subflags(f_reg, data, tmp);
 }
 
 :or f_reg, data is f_opc=0xb & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg | data;
-    csnzflags(tmp, data, f_reg);
+    addflags(tmp, data, f_reg);
 }
 
 :and f_reg, data is f_opc=0xc & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg & data;
-    csnzflags(tmp, data, f_reg);
+    addflags(tmp, data, f_reg);
 }
 
 :xor f_reg, data is f_opc=0xd & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg ^ data;
-    csnzflags(tmp, data, f_reg);
+    addflags(tmp, data, f_reg);
 }
 
 :unsigned is f_all=9 [
@@ -266,27 +281,31 @@ macro csnzflags(op1, op2, value) {
 }
 
 :lsl data is f_all=9; f_opc=0xa & f_reg=0 & data {
-    local tmp:2 = al;
-    al = al << data;
-    csnzflags(tmp, data, al);
+    local tmp:4 = zext(al) << data;
+    local shifted_out:1 = tmp[0,1];
+    al = tmp:2;
+    shiftflags(shifted_out, al);
 }
 
 :asl data is f_opc=0xa & f_reg=0 & data {
-    local tmp:2 = al;
-    al = al << data;
-    csnzflags(tmp, data, al);
+    local tmp:4 = zext(al) << data;
+    local shifted_out:1 = tmp[0,1];
+    al = tmp:2;
+    shiftflags(shifted_out, al);
 }
 
 :lsr data is f_all=9; f_opc=0xa & f_reg=1 & data {
-    local tmp:2 = al;
+    local tmp:2 = al >> (data - 1);
+    local shifted_out:1 = tmp[0,1];
     al = al >> data;
-    csnzflags(tmp, data, al);
+    shiftflags(shifted_out, al);
 }
 
 :asr data is f_opc=0xa & f_reg=1 & data {
-    local tmp:2 = al;
+    local tmp:2 = al >> (data - 1);
+    local shifted_out:1 = tmp[0,1];            # the last bit shifted out
     al = al s>> data;
-    csnzflags(tmp, data, al);
+    shiftflags(shifted_out, al);
 }
 
 :asr data is f_opc=0xa & f_reg=2 & data {
@@ -346,17 +365,17 @@ macro csnzflags(op1, op2, value) {
 }
 
 :bgt branch_addr is f_opc=2 & f_mode=0 & f_reg=0 & branch_addr {
-    if ((n == 0) && (z == 0)) goto branch_addr;
+    if ((s == 0) && (z == 0)) goto branch_addr;
 }
 
 :bge branch_addr is f_opc=2 & f_mode=0 & f_reg=1 & branch_addr {
-    if (n == 0) goto branch_addr;
+    if (s == 0) goto branch_addr;
 }
 
 :ble branch_addr is f_opc=2 & f_mode=0 & f_reg=2 & branch_addr {
-    if ((n == 1) && (z == 1)) goto branch_addr;
+    if ((s == 1) || (z == 1)) goto branch_addr;
 }
 
 :bcz branch_addr is f_opc=2 & f_mode=0 & f_reg=3 & branch_addr {
-    if ((c == 1) && (z == 1)) goto branch_addr;
+    if ((c == 1) || (z == 1)) goto branch_addr;
 }
