@@ -46,8 +46,12 @@ attach variables [ f_mode ] [ _ _ xl y ];
 attach variables [ f_ld ] [ _ _ _ _ _ flags xl y _ _ _ _ _ _ xh _ ];
 attach variables [ f_st ] [ _ flags xl y _ _ _ _ _ _ xh _ _ _ _ _ ];
 
-uimmval: val                is f_opnd & ext
-[ val = f_opnd + (ext << 8); ]
+uimmval: val    is f_sopnd & ext=0
+[ val = f_sopnd & 0xffff; ]
+{ export *[const]:2 val; }
+
+uimmval: val    is f_opnd & ext
+[ val = (f_opnd + (ext << 8)) & 0xffff; ]
 { export *[const]:2 val; }
 
 simmval: val                is f_sopnd & ext
@@ -86,7 +90,7 @@ branch_addr: reloc           is f_mode=0 & f_sopnd & ext & num_prefix
 
 branch_addr: "@"f_opnd       is f_mode=1 & f_opnd  { 
     local tmp:2 = zext(f_opnd:1); 
-    tmp = (0xff00 * (tmp >> 7)) + tmp; 
+    tmp = (0xff00 * (tmp >> 7)) | tmp; 
     local ptr:3 = zext(tmp);
     export *[mem]:3 ptr; 
 }
@@ -104,8 +108,8 @@ branch_addr: "@(#"off^,"y)" is f_mode=3 & off
 }
 
 macro nzflags(value) {
- n = value s< 0;
- z = value == 0;
+    n = value s< 0;
+    z = value == 0;
 }
 
 macro csnzflags(op1, op2, value) {
