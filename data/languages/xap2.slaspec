@@ -280,13 +280,7 @@ macro shiftflags(shifted_out, value) {
     call branch_addr;
 }
 
-:lsl data is f_all=9; f_opc=0xa & f_reg=0 & data {
-    local tmp:4 = zext(al) << data;
-    local shifted_out:1 = tmp[0,1];
-    al = tmp:2;
-    shiftflags(shifted_out, al);
-}
-
+# arithmetic/logical shift left, zero-extended
 :asl data is f_opc=0xa & f_reg=0 & data {
     local tmp:4 = zext(al) << data;
     local shifted_out:1 = tmp[0,1];
@@ -294,24 +288,20 @@ macro shiftflags(shifted_out, value) {
     shiftflags(shifted_out, al);
 }
 
+# arithmetic shift right, sign-extended
+:asr data is f_opc=0xa & f_reg=1 & data {
+    local tmp:2 = al >> (data - 1);
+    local shifted_out:1 = tmp[0,1];
+    al = al s>> data;
+    shiftflags(shifted_out, al);
+}
+
+# logical shift right, zero-extended
 :lsr data is f_all=9; f_opc=0xa & f_reg=1 & data {
     local tmp:2 = al >> (data - 1);
     local shifted_out:1 = tmp[0,1];
     al = al >> data;
     shiftflags(shifted_out, al);
-}
-
-:asr data is f_opc=0xa & f_reg=1 & data {
-    local tmp:2 = al >> (data - 1);
-    local shifted_out:1 = tmp[0,1];            # the last bit shifted out
-    al = al s>> data;
-    shiftflags(shifted_out, al);
-}
-
-:asr data is f_opc=0xa & f_reg=2 & data {
-    local tmp:2 = al;
-    al = al s>> data;
-    csnzflags(tmp, data, al);
 }
 
 :rts is f_opc=0xe & f_right=2 & f_opnd=0 {
