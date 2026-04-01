@@ -34,7 +34,7 @@
 
   <stackpointer register="y" space="mem"/>
   <returnaddress>
-      <register name="lr"/>
+      <register name="x"/>
   </returnaddress>
 
   <default_proto>
