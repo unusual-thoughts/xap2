@@ -128,7 +128,7 @@ macro csnzflags(op1, op2, value) {
 :bc  is f_opc=0 & f_right=9 & f_opnd=0xff {}
 :bc2 is f_opc=0 & f_right=9 & f_opnd=0xfd {}
 
-:nop is f_all=0 {}
+:nop is f_all=0 & num_prefix=0 {}
 :sleep is f_opc=0 & f_right=8 & f_opnd=0 {}
 # Breakpoint
 :brk is f_opc=0 & f_right=4 & f_opnd=0 {}
