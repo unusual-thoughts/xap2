@@ -337,7 +337,8 @@ macro csnzflags(op1, op2, value) {
 }
 
 :brxl is f_opc=0 & f_right=9 & f_opnd=0xfe {
-    goto [xl];
+    local dst:3 = (inst_next >> 1) + sext(xl);
+    goto [dst];
 }
 
 :bgt branch_addr is f_opc=2 & f_mode=0 & f_reg=0 & branch_addr {
