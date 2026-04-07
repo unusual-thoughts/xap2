@@ -127,8 +127,7 @@ macro subflags(op1, op2, value) {
     z = value == 0;
 }
 
-macro shiftflags(shifted_out, value) {
-    c = shifted_out;
+macro shiftflags(value) {
     # not sure if those flags are actually set
     n = value s< 0;
     s = n;
@@ -300,42 +299,40 @@ macro shiftflags(shifted_out, value) {
 
 # arithmetic/logical shift left, zero-extended
 :asl data is f_opc=0xa & f_reg=0 & data {
-    local tmp:4 = zext(al) << data;
-    local shifted_out:1 = tmp[0,1];
-    al = tmp:2;
-    shiftflags(shifted_out, al);
+    local tmp:4 = a << (data - 1);
+    c = tmp[31,1];
+    a = a << data;
+    shiftflags(a);
 }
 
 # arithmetic shift right, sign-extended
 :asr data is f_opc=0xa & f_reg=1 & data {
-    local tmp:2 = al >> (data - 1);
-    local shifted_out:1 = tmp[0,1];
-    al = al s>> data;
-    shiftflags(shifted_out, al);
+    local tmp:4 = a >> (data - 1);
+    c = tmp[0,1];
+    a = a s>> data;
+    shiftflags(a);
 }
 
 # logical shift right, zero-extended
 :lsr data is f_all=9; f_opc=0xa & f_reg=1 & data {
-    local tmp:2 = al >> (data - 1);
-    local shifted_out:1 = tmp[0,1];
-    al = al >> data;
-    shiftflags(shifted_out, al);
+    local tmp:4 = a >> (data - 1);
+    c = tmp[0,1];
+    a = a >> data;
+    shiftflags(a);
 }
 
 :rol data is f_opc=0xa & f_reg=2 & data {
-    local n:2 = data;
-    local old_a:4 = a;
-    local shifted_out:1 = (old_a << (n - 1))[31,1];
-    a = (old_a << n) | (old_a >> (32 - n));
-    shiftflags(shifted_out, a);
+    local tmp:4 = a << (data - 1);
+    c = tmp[31,1];
+    a = (a << data) | (a >> (32 - data));
+    shiftflags(a);
 }
 
 :ror data is f_opc=0xa & f_reg=3 & data {
-    local n:2 = data;
-    local old_a:4 = a;
-    local shifted_out:1 = (old_a >> (n - 1))[0,1];
-    a = (old_a >> n) | (old_a << (32 - n));
-    shiftflags(shifted_out, a);
+    local tmp:4 = a >> (data - 1);
+    c = tmp[0,1];
+    a = (a >> data) | (a << (32 - data));
+    shiftflags(a);
 }
 
 :rts is f_opc=0xe & f_right=2 & f_opnd=0 {
