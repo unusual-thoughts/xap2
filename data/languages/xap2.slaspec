@@ -37,6 +37,11 @@ define token opc (16)
     f_byte=(0,7)
 ;
 
+define pcodeop bc2_memcpy;
+define pcodeop sleep;
+define pcodeop brk;
+define pcodeop sif;
+
 attach variables [ f_reg ] [ ah al xl y ];
 attach variables [ f_mode ] [ _ _ xl y ];
 attach variables [ f_ld ] [ _ _ _ _ _ flags xl y _ _ _ _ _ _ xh _ ];
@@ -139,16 +144,29 @@ macro shiftflags(shifted_out, value) {
     build instruction;
 }
 
-# TODO: Figure out what bc/bc2 do
+# TODO: Figure out what bc does (same as bc2?)
 :bc  is f_opc=0 & f_right=9 & f_opnd=0xff {}
-:bc2 is f_opc=0 & f_right=9 & f_opnd=0xfd {}
+:bc2 is f_opc=0 & f_right=9 & f_opnd=0xfd {
+    # dst=AH, src=X, count=AL
+    bc2_memcpy(ah, xl, al);
+    # AL zeroed on return
+    al = 0;
+}
 
 :nop is f_all=0 & num_prefix=0 {}
-:sleep is f_opc=0 & f_right=8 & f_opnd=0 {}
+:sleep is f_opc=0 & f_right=8 & f_opnd=0 {
+    sleep();
+}
+
 # Breakpoint
-:brk is f_opc=0 & f_right=4 & f_opnd=0 {}
+:brk is f_opc=0 & f_right=4 & f_opnd=0 {
+    brk();
+}
+
 # Perform SIF (serial interface) cycle
-:sif is f_opc=0 & f_right=0xc & f_opnd=0 {}
+:sif is f_opc=0 & f_right=0xc & f_opnd=0 {
+    sif();
+}
 
 # Return from interrupt
 :rti is f_opc=0 & f_right=0xd & data {
