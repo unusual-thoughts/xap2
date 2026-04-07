@@ -244,11 +244,11 @@ macro shiftflags(shifted_out, value) {
 {}
 
 :umult data is u=1 & f_opc=9 & f_reg=0 & data {
-    a = zext(ah) + zext(al) * zext(data);
+    a = zext(al) * zext(data);
 }
 
 :smult data is u=0 & f_opc=9 & f_reg=0 & data {
-    a = sext(ah) + sext(al) * sext(data);
+    a = sext(al) * sext(data);
 }
 
 :udiv data is u=1 & f_opc=9 & f_reg=1 & data {
