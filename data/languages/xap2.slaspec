@@ -304,6 +304,22 @@ macro shiftflags(shifted_out, value) {
     shiftflags(shifted_out, al);
 }
 
+:rol data is f_opc=0xa & f_reg=2 & data {
+    local n:2 = data;
+    local old_a:4 = a;
+    local shifted_out:1 = (old_a << (n - 1))[31,1];
+    a = (old_a << n) | (old_a >> (32 - n));
+    shiftflags(shifted_out, a);
+}
+
+:ror data is f_opc=0xa & f_reg=3 & data {
+    local n:2 = data;
+    local old_a:4 = a;
+    local shifted_out:1 = (old_a >> (n - 1))[0,1];
+    a = (old_a >> n) | (old_a << (32 - n));
+    shiftflags(shifted_out, a);
+}
+
 :rts is f_opc=0xe & f_right=2 & f_opnd=0 {
     return [x];
 }
