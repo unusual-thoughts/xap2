@@ -153,8 +153,12 @@ macro shiftflags(shifted_out, value) {
 :brk is f_opc=0 & f_right=4 & f_opnd=0 {}
 # Perform SIF (serial interface) cycle
 :sif is f_opc=0 & f_right=0xc & f_opnd=0 {}
+
 # Return from interrupt
-:rti is f_opc=0 & f_right=0xd {}
+:rti is f_opc=0 & f_right=0xd & data {
+    flags = data;
+    return [x];
+}
 
 :ld f_ld, data is f_opc=0 & f_ld & f_right=5 & data {
     f_ld = data;
