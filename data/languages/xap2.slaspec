@@ -46,12 +46,8 @@ attach variables [ f_mode ] [ _  _  xl y ];
 attach variables [ f_ld ] [ _ _ _ _ _ flags xl y _ _ _ _ _ _ xh _ ];
 attach variables [ f_st ] [ _ flags xl y _ _ _ _ _ _ xh _ _ _ _ _ ];
 
-uimmval: val    is f_sopnd & ext=0
-[ val = f_sopnd & 0xffff; ]
-{ export *[const]:2 val; }
-
-uimmval: val    is f_opnd & ext
-[ val = (f_opnd + (ext << 8)) & 0xffff; ]
+absaddr: val    is f_sopnd & ext
+[ val = (f_sopnd + (ext << 8)) & 0xffff; ]
 { export *[const]:2 val; }
 
 simmval: val                is f_sopnd & ext
@@ -66,7 +62,7 @@ data: "@XAP_AL"            is f_mode=1 & f_opnd=0xe1           { export al; }
 data: "@XAP_UXH"           is f_mode=1 & f_opnd=0xe2           { export xh; }
 data: "@XAP_UXL"           is f_mode=1 & f_opnd=0xe3           { export xl; }
 data: "@XAP_UY"            is f_mode=1 & f_opnd=0xe4           { export y; }
-data: "@H'"uimmval         is f_mode=1 & uimmval               { export *[mem]:2 uimmval; }
+data: "@H'"absaddr         is f_mode=1 & absaddr               { export *[mem]:2 absaddr; }
 
 off: val                   is f_sopnd & ext
 [ val = f_sopnd + (ext << 8); ]
@@ -96,8 +92,8 @@ branch_addr: "X+#"off      is f_mode=2 & off
     export *[code]:3 tmp;
 }
 
-branch_addr_ind: "@"simmval      is f_mode=1 & simmval {
-    local tmp:3 = *[mem]:3 simmval;
+branch_addr_ind: "@H'"absaddr  is f_mode=1 & absaddr {
+    local tmp:3 = *[mem]:3 absaddr;
     export tmp;
 }
 
