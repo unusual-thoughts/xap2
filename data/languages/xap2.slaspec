@@ -28,7 +28,6 @@ define token opc (16)
     f_sopnd=(8,15) signed
     f_opnd=(8,15) 
     f_opc=(4,7)
-    f_right=(0,3)
     f_ld=(0,3)
     f_st=(0,3)
     f_mid=(1,2)
@@ -42,8 +41,8 @@ define pcodeop sleep;
 define pcodeop brk;
 define pcodeop sif;
 
-attach variables [ f_reg ] [ ah al xl y ];
-attach variables [ f_mode ] [ _ _ xl y ];
+attach variables [ f_reg ]  [ ah al xl y ];
+attach variables [ f_mode ] [ _  _  xl y ];
 attach variables [ f_ld ] [ _ _ _ _ _ flags xl y _ _ _ _ _ _ xh _ ];
 attach variables [ f_st ] [ _ flags xl y _ _ _ _ _ _ xh _ _ _ _ _ ];
 
@@ -144,36 +143,38 @@ macro shiftflags(value) {
 }
 
 # TODO: Figure out what bc does (same as bc2?)
-:bc  is f_opc=0 & f_right=9 & f_opnd=0xff {}
-:bc2 is f_opc=0 & f_right=9 & f_opnd=0xfd {
+:bc  is f_all=0xff09 {}
+
+:bc2 is f_all=0xfd09 {
     # dst=AH, src=X, count=AL
     bc2_memcpy(ah, xl, al);
     # AL zeroed on return
     al = 0;
 }
 
-:nop is f_all=0 & num_prefix=0 {}
-:sleep is f_opc=0 & f_right=8 & f_opnd=0 {
+:nop is f_all=0x0000 & num_prefix=0 {}
+
+:sleep is f_all=0x0008 {
     sleep();
 }
 
 # Breakpoint
-:brk is f_opc=0 & f_right=4 & f_opnd=0 {
+:brk is f_all=0x0004 {
     brk();
 }
 
 # Perform SIF (serial interface) cycle
-:sif is f_opc=0 & f_right=0xc & f_opnd=0 {
+:sif is f_all=0x000c {
     sif();
 }
 
 # Return from interrupt
-:rti is f_opc=0 & f_right=0xd & data {
+:rti is f_byte=0x0d & data {
     flags = data;
     return [x];
 }
 
-:ld f_ld, data is f_opc=0 & f_ld & f_right=5 & data {
+:ld f_ld, data is f_byte=0x05 & f_ld & data {
     f_ld = data;
 }
 
@@ -187,7 +188,7 @@ macro shiftflags(value) {
     nzflags(f_reg);
 }
 
-:st f_st, data is f_opc=0 & f_right=1 & f_st & data {
+:st f_st, data is f_byte=0x01 & f_st & data {
     f_st = data;
 }
 
@@ -306,7 +307,7 @@ macro shiftflags(value) {
 }
 
 # arithmetic shift right, sign-extended
-:asr data is f_opc=0xa & f_reg=1 & data {
+:asr data is u=0 & f_opc=0xa & f_reg=1 & data {
     local tmp:4 = a >> (data - 1);
     c = tmp[0,1];
     a = a s>> data;
@@ -314,7 +315,7 @@ macro shiftflags(value) {
 }
 
 # logical shift right, zero-extended
-:lsr data is f_all=9; f_opc=0xa & f_reg=1 & data {
+:lsr data is u=1 & f_opc=0xa & f_reg=1 & data {
     local tmp:4 = a >> (data - 1);
     c = tmp[0,1];
     a = a >> data;
@@ -335,7 +336,7 @@ macro shiftflags(value) {
     shiftflags(a);
 }
 
-:rts is f_opc=0xe & f_right=2 & f_opnd=0 {
+:rts is f_all=0x00e2 {
     return [x];
 }
 
@@ -371,32 +372,32 @@ macro shiftflags(value) {
     if (c == 1) goto branch_addr;
 }
 
-:enterl imm is f_opc=0 & f_right=0xb & imm {
+:enterl imm is f_byte=0x0b & imm {
     y = y + imm;
 }
 
-:leavel imm is f_opc=0 & f_right=0xf & imm {
+:leavel imm is f_byte=0x0f & imm {
     y = y - imm;
     return [x];
 }
 
-:brxl is f_opc=0 & f_right=9 & f_opnd=0xfe {
+:brxl is f_all=0xfe09 {
     local dst:3 = (inst_next >> 1) + sext(xl);
     goto [dst];
 }
 
-:bgt branch_addr is f_opc=2 & f_mode=0 & f_reg=0 & branch_addr {
+:bgt branch_addr is f_byte=0x20 & branch_addr {
     if ((s == 0) && (z == 0)) goto branch_addr;
 }
 
-:bge branch_addr is f_opc=2 & f_mode=0 & f_reg=1 & branch_addr {
+:bge branch_addr is f_byte=0x24 & branch_addr {
     if (s == 0) goto branch_addr;
 }
 
-:ble branch_addr is f_opc=2 & f_mode=0 & f_reg=2 & branch_addr {
+:ble branch_addr is f_byte=0x28 & branch_addr {
     if ((s == 1) || (z == 1)) goto branch_addr;
 }
 
-:bcz branch_addr is f_opc=2 & f_mode=0 & f_reg=3 & branch_addr {
+:bcz branch_addr is f_byte=0x2C & branch_addr {
     if ((c == 1) || (z == 1)) goto branch_addr;
 }
