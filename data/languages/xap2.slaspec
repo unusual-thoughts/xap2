@@ -78,11 +78,13 @@ data: "@(#"off^,"x)"       is f_mode=2 & off
     export *[mem]:2 tmp;
 }
 
-data: "@(#"off^,"y)"      is f_mode=3 & off
+stackref: "@(#"off^,"y)"   is off
 {
     local tmp:2 = y + off; 
     export *[mem]:2 tmp; 
 }
+
+data: stackref             is f_mode=3 & stackref              { export stackref; }
 
 branch_addr: reloc           is f_mode=0 & f_sopnd & ext & num_prefix
 [ reloc = inst_start + num_prefix + f_sopnd + (ext << 8); ]
@@ -174,12 +176,12 @@ macro shiftflags(value) {
     return [x];
 }
 
-:ld f_ld, data is f_byte=0x05 & f_ld & data {
-    f_ld = data;
+:ld f_ld, stackref is f_byte=0x05 & f_ld & stackref {
+    f_ld = stackref;
 }
 
-:ld f_ld, data is f_opc=0 & f_ld & f_mid=3 & data {
-    f_ld = data;
+:ld f_ld, stackref is f_opc=0 & f_ld & f_mid=3 & stackref {
+    f_ld = stackref;
     nzflags(f_ld);
 }
 
@@ -188,12 +190,12 @@ macro shiftflags(value) {
     nzflags(f_reg);
 }
 
-:st f_st, data is f_byte=0x01 & f_st & data {
-    f_st = data;
+:st f_st, stackref is f_byte=0x01 & f_st & stackref {
+    f_st = stackref;
 }
 
-:st f_st, data is f_opc=0 & f_st & f_mid=1 & data {
-    f_st = data;
+:st f_st, stackref is f_opc=0 & f_st & f_mid=1 & stackref {
+    f_st = stackref;
     nzflags(f_st);
 }
 
