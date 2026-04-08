@@ -26,7 +26,7 @@ define context contextreg
 define token opc (16)
     f_all=(0,15)
     f_sopnd=(8,15) signed
-    f_opnd=(8,15) 
+    f_opnd=(8,15)
     f_opc=(4,7)
     f_ld=(0,3)
     f_st=(0,3)
@@ -80,8 +80,8 @@ data: "@(#"off^,"x)"       is f_mode=2 & off
 
 stackref: "@(#"off^,"y)"   is off
 {
-    local tmp:2 = y + off; 
-    export *[mem]:2 tmp; 
+    local tmp:2 = y + off;
+    export *[mem]:2 tmp;
 }
 
 data: stackref             is f_mode=3 & stackref              { export stackref; }
@@ -90,23 +90,20 @@ branch_addr: reloc           is f_mode=0 & f_sopnd & ext & num_prefix
 [ reloc = inst_start + num_prefix + f_sopnd + (ext << 8); ]
 { export *[code]:3 reloc; }
 
-branch_addr: "@"f_opnd       is f_mode=1 & f_opnd  { 
-    local tmp:2 = zext(f_opnd:1); 
-    tmp = (0xff00 * (tmp >> 7)) | tmp; 
-    local ptr:3 = zext(tmp);
-    export *[mem]:3 ptr; 
-}
-
 branch_addr: "X+#"off      is f_mode=2 & off
-{ 
+{
     local tmp:3 = x:3 + sext(off);
-    export *[code]:3 tmp; 
+    export *[code]:3 tmp;
 }
 
-branch_addr: "@(#"off^,"y)" is f_mode=3 & off 
-{ 
-    local tmp:3 = zext(y) + sext(off); 
-    export *[mem]:3 tmp; 
+branch_addr_ind: "@"simmval      is f_mode=1 & simmval {
+    local tmp:3 = *[mem]:3 simmval;
+    export tmp;
+}
+
+branch_addr_ind: "@(#"off^",y)"  is f_mode=3 & off {
+    local tmp:3 = *[mem]:3 (y + off);
+    export tmp;
 }
 
 macro nzflags(value) {
@@ -300,6 +297,11 @@ macro shiftflags(value) {
     call branch_addr;
 }
 
+:bsr branch_addr_ind is f_opc=9 & f_reg=3 & branch_addr_ind {
+    x = inst_next >> 1;
+    call [branch_addr_ind];
+}
+
 # arithmetic/logical shift left, zero-extended
 :asl data is f_opc=0xa & f_reg=0 & data {
     local tmp:4 = a << (data - 1);
@@ -346,32 +348,73 @@ macro shiftflags(value) {
     goto branch_addr;
 }
 
+:bra branch_addr_ind is f_opc=0xe & f_reg=0 & branch_addr_ind {
+    goto [branch_addr_ind];
+}
+
 :blt branch_addr is f_opc=0xe & f_reg=1 & branch_addr {
     if (s == 1) goto branch_addr;
+}
+
+:blt branch_addr_ind is f_opc=0xe & f_reg=1 & branch_addr_ind {
+    if (s != 1) goto inst_next;
+    goto [branch_addr_ind];
 }
 
 :bpl branch_addr is f_opc=0xe & f_reg=2 & branch_addr {
     if (n == 0) goto branch_addr;
 }
 
+:bpl branch_addr_ind is f_opc=0xe & f_reg=2 & branch_addr_ind {
+    if (n != 0) goto inst_next;
+    goto [branch_addr_ind];
+}
+
+
 :bmi branch_addr is f_opc=0xe & f_reg=3 & branch_addr {
     if (n == 1) goto branch_addr;
 }
 
+:bmi branch_addr_ind is f_opc=0xe & f_reg=3 & branch_addr_ind {
+    if (n != 1) goto inst_next;
+    goto [branch_addr_ind];
+}
+
+
 :bne branch_addr is f_opc=0xf & f_reg=0 & branch_addr {
     if (z == 0) goto branch_addr;
+}
+
+:bne branch_addr_ind is f_opc=0xf & f_reg=0 & branch_addr_ind {
+    if (z != 0) goto inst_next;
+    goto [branch_addr_ind];
 }
 
 :beq branch_addr is f_opc=0xf & f_reg=1 & branch_addr {
     if (z == 1) goto branch_addr;
 }
 
+:beq branch_addr_ind is f_opc=0xf & f_reg=1 & branch_addr_ind {
+    if (z != 1) goto inst_next;
+    goto [branch_addr_ind];
+}
+
 :bcc branch_addr is f_opc=0xf & f_reg=2 & branch_addr {
     if (c == 0) goto branch_addr;
 }
 
+:bcc branch_addr_ind is f_opc=0xf & f_reg=2 & branch_addr_ind {
+    if (c != 0) goto inst_next;
+    goto [branch_addr_ind];
+}
+
 :bcs branch_addr is f_opc=0xf & f_reg=3 & branch_addr {
     if (c == 1) goto branch_addr;
+}
+
+:bcs branch_addr_ind is f_opc=0xf & f_reg=3 & branch_addr_ind {
+    if (c != 1) goto inst_next;
+    goto [branch_addr_ind];
 }
 
 :enterl imm is f_byte=0x0b & imm {
