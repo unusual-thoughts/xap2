@@ -6,7 +6,7 @@ define space register type=register_space size=2;
 define space mem      type=ram_space      size=2 wordsize=2;
 
 define register offset=0x0 size=4 [ a     x                ];
-define register offset=0x0 size=2 [ ah al xh xl y pc flags ];
+define register offset=0x0 size=2 [ al ah xl xh y pc flags ];
 
 define bitrange
     z=flags[0,1]
@@ -99,7 +99,7 @@ branch_addr: "@"f_opnd       is f_mode=1 & f_opnd  {
 
 branch_addr: "X+#"off      is f_mode=2 & off
 { 
-    local tmp:3 = zext(xh) + sext(off); 
+    local tmp:3 = x:3 + sext(off);
     export *[code]:3 tmp; 
 }
 
