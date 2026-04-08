@@ -3,7 +3,7 @@ define alignment=2;
 
 define space code     type=ram_space      size=3 wordsize=2 default;
 define space register type=register_space size=2;
-define space mem      type=ram_space      size=3 wordsize=2;
+define space mem      type=ram_space      size=2 wordsize=2;
 
 define register offset=0x0 size=4 [ a     x                ];
 define register offset=0x0 size=2 [ ah al xh xl y pc flags ];
@@ -72,10 +72,10 @@ off: val                   is f_sopnd & ext
 [ val = f_sopnd + (ext << 8); ]
 { export *[const]:2 val; }
 
-data: "@(#"off^,"x)"      is f_mode=2 & off
-{ 
-    local tmp:2 = xl + off; # should be xh or xl?
-    export *[mem]:2 tmp; 
+data: "@(#"off^,"x)"       is f_mode=2 & off
+{
+    local tmp:2 = xl + off;
+    export *[mem]:2 tmp;
 }
 
 data: "@(#"off^,"y)"      is f_mode=3 & off
