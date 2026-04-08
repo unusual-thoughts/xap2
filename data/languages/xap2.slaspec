@@ -255,11 +255,11 @@ macro shiftflags(value) {
     addflags(tmp, data, f_reg);
 }
 
-:unsigned is f_all=9 [
-    u = 1;
-    globalset(inst_next, u);
-]
-{}
+:^instruction is f_all=0x0009; instruction
+[ u = 1; ]
+{
+    build instruction;
+}
 
 :umult data is u=1 & f_opc=9 & f_reg=0 & data {
     a = zext(al) * zext(data);
