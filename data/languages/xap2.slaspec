@@ -16,6 +16,7 @@ define bitrange
 ;
 
 define register offset=0x100 size=4 contextreg;
+define register offset=0x200 size=2 [s0 s1 s2 s3 s4 s5];
 
 define context contextreg
     ext=(0,15) signed noflow
@@ -62,6 +63,12 @@ data: "@XAP_AL"            is f_mode=1 & f_opnd=0xe1           { export al; }
 data: "@XAP_UXH"           is f_mode=1 & f_opnd=0xe2           { export xh; }
 data: "@XAP_UXL"           is f_mode=1 & f_opnd=0xe3           { export xl; }
 data: "@XAP_UY"            is f_mode=1 & f_opnd=0xe4           { export y; }
+data: "@XAP_S0"            is f_mode=1 & f_opnd=0xf8           { export s0; }
+data: "@XAP_S1"            is f_mode=1 & f_opnd=0xf9           { export s1; }
+data: "@XAP_S2"            is f_mode=1 & f_opnd=0xfa           { export s2; }
+data: "@XAP_S3"            is f_mode=1 & f_opnd=0xfb           { export s3; }
+data: "@XAP_S4"            is f_mode=1 & f_opnd=0xfc           { export s4; }
+data: "@XAP_S5"            is f_mode=1 & f_opnd=0xff           { export s5; }
 data: "@H'"absaddr         is f_mode=1 & absaddr               { export *[mem]:2 absaddr; }
 
 off: val                   is f_sopnd & ext
