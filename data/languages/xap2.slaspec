@@ -68,6 +68,10 @@ off: val                   is f_sopnd & ext
 [ val = f_sopnd + (ext << 8); ]
 { export *[const]:2 val; }
 
+boff: val                  is f_sopnd & ext
+[ val = f_sopnd + (ext << 8); ]
+{ export *[const]:3 val; }
+
 data: "@(#"off^,"x)"       is f_mode=2 & off
 {
     local tmp:2 = xl + off;
@@ -86,9 +90,9 @@ branch_addr: reloc           is f_mode=0 & f_sopnd & ext & num_prefix
 [ reloc = inst_start + num_prefix + f_sopnd + (ext << 8); ]
 { export *[code]:3 reloc; }
 
-branch_addr: "X+#"off      is f_mode=2 & off
+branch_addr: "X+#"boff     is f_mode=2 & boff
 {
-    local tmp:3 = x:3 + sext(off);
+    local tmp:3 = x:3 + boff;
     export *[code]:3 tmp;
 }
 
