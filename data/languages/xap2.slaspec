@@ -93,23 +93,28 @@ stackref: "@(#"off^,"y)"   is off
 
 data: stackref             is f_mode=3 & stackref              { export stackref; }
 
-branch_addr: reloc           is f_mode=0 & f_sopnd & ext & num_prefix
+# regular relocatable jump/call: PC <- PC + (1-3 byte signed offset)
+branch_addr: reloc         is f_mode=0 & f_sopnd & ext & num_prefix
 [ reloc = inst_start + num_prefix + f_sopnd + (ext << 8); ]
 { export *[code]:3 reloc; }
 
-branch_addr: "X+#"boff     is f_mode=2 & boff
+# special relative jump/call:    PC <- X  + (1-3 byte signed offset)
+# used for long function pointers, and rts which is an alias for bra 0,x
+branch_addr: boff^",x"     is f_mode=2 & boff
 {
     local tmp:3 = x:3 + boff;
     export *[code]:3 tmp;
 }
 
-branch_addr_ind: "@H'"absaddr  is f_mode=1 & absaddr {
-    local tmp:3 = *[mem]:3 absaddr;
+# data indirect jump/call:       PC <- datamem[1-2 byte address] (16-bit destination, XH set separately)
+braddr_ind: "@H'"absaddr   is f_mode=1 & absaddr {
+    local tmp:3 = zext(*[mem]:2 absaddr);
     export tmp;
 }
 
-branch_addr_ind: "@(#"off^",y)"  is f_mode=3 & off {
-    local tmp:3 = *[mem]:3 (y + off);
+# stack indirect jump/call:      PC <- datamem[y + 1-2 byte signed offset] (16-bit destination)
+braddr_ind: "@(#"off^",y)" is f_mode=3 & off {
+    local tmp:3 = zext(*[mem]:2 (y + off));
     export tmp;
 }
 
@@ -304,9 +309,9 @@ macro shiftflags(value) {
     call branch_addr;
 }
 
-:bsr branch_addr_ind is f_opc=9 & f_reg=3 & branch_addr_ind {
+:bsr braddr_ind is f_opc=9 & f_reg=3 & braddr_ind {
     x = inst_next >> 1;
-    call [branch_addr_ind];
+    call [braddr_ind];
 }
 
 # arithmetic/logical shift left, zero-extended
@@ -355,26 +360,26 @@ macro shiftflags(value) {
     goto branch_addr;
 }
 
-:bra branch_addr_ind is f_opc=0xe & f_reg=0 & branch_addr_ind {
-    goto [branch_addr_ind];
+:bra braddr_ind is f_opc=0xe & f_reg=0 & braddr_ind {
+    goto [braddr_ind];
 }
 
 :blt branch_addr is f_opc=0xe & f_reg=1 & branch_addr {
     if (s == 1) goto branch_addr;
 }
 
-:blt branch_addr_ind is f_opc=0xe & f_reg=1 & branch_addr_ind {
+:blt braddr_ind is f_opc=0xe & f_reg=1 & braddr_ind {
     if (s != 1) goto inst_next;
-    goto [branch_addr_ind];
+    goto [braddr_ind];
 }
 
 :bpl branch_addr is f_opc=0xe & f_reg=2 & branch_addr {
     if (n == 0) goto branch_addr;
 }
 
-:bpl branch_addr_ind is f_opc=0xe & f_reg=2 & branch_addr_ind {
+:bpl braddr_ind is f_opc=0xe & f_reg=2 & braddr_ind {
     if (n != 0) goto inst_next;
-    goto [branch_addr_ind];
+    goto [braddr_ind];
 }
 
 
@@ -382,9 +387,9 @@ macro shiftflags(value) {
     if (n == 1) goto branch_addr;
 }
 
-:bmi branch_addr_ind is f_opc=0xe & f_reg=3 & branch_addr_ind {
+:bmi braddr_ind is f_opc=0xe & f_reg=3 & braddr_ind {
     if (n != 1) goto inst_next;
-    goto [branch_addr_ind];
+    goto [braddr_ind];
 }
 
 
@@ -392,36 +397,36 @@ macro shiftflags(value) {
     if (z == 0) goto branch_addr;
 }
 
-:bne branch_addr_ind is f_opc=0xf & f_reg=0 & branch_addr_ind {
+:bne braddr_ind is f_opc=0xf & f_reg=0 & braddr_ind {
     if (z != 0) goto inst_next;
-    goto [branch_addr_ind];
+    goto [braddr_ind];
 }
 
 :beq branch_addr is f_opc=0xf & f_reg=1 & branch_addr {
     if (z == 1) goto branch_addr;
 }
 
-:beq branch_addr_ind is f_opc=0xf & f_reg=1 & branch_addr_ind {
+:beq braddr_ind is f_opc=0xf & f_reg=1 & braddr_ind {
     if (z != 1) goto inst_next;
-    goto [branch_addr_ind];
+    goto [braddr_ind];
 }
 
 :bcc branch_addr is f_opc=0xf & f_reg=2 & branch_addr {
     if (c == 0) goto branch_addr;
 }
 
-:bcc branch_addr_ind is f_opc=0xf & f_reg=2 & branch_addr_ind {
+:bcc braddr_ind is f_opc=0xf & f_reg=2 & braddr_ind {
     if (c != 0) goto inst_next;
-    goto [branch_addr_ind];
+    goto [braddr_ind];
 }
 
 :bcs branch_addr is f_opc=0xf & f_reg=3 & branch_addr {
     if (c == 1) goto branch_addr;
 }
 
-:bcs branch_addr_ind is f_opc=0xf & f_reg=3 & branch_addr_ind {
+:bcs braddr_ind is f_opc=0xf & f_reg=3 & braddr_ind {
     if (c != 1) goto inst_next;
-    goto [branch_addr_ind];
+    goto [braddr_ind];
 }
 
 :enterl imm is f_byte=0x0b & imm {
