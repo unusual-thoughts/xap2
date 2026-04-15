@@ -124,24 +124,21 @@ macro nzflags(value) {
 }
 
 macro addflags(op1, op2, value) {
+    nzflags(value);
     c = carry(op1, op2);
-    n = value s< 0;
     s = (value s< 0) ^^ scarry(op1, op2);
-    z = value == 0;
 }
 
 macro subflags(op1, op2, value) {
+    nzflags(value);
     c = op1 < op2;
-    n = value s< 0;
     s = (value s< 0) ^^ sborrow(op1, op2);
-    z = value == 0;
 }
 
 macro shiftflags(value) {
     # not sure if those flags are actually set
-    n = value s< 0;
+    nzflags(value);
     s = n;
-    z = value == 0;
 }
 
 :^instruction is (f_byte=0 & f_sopnd); instruction
