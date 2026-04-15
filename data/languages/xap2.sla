@@ -110,7 +110,7 @@
     <varlist_sym_head name="f_reg" id="0x1c" scope="0x0"/>
     <varlist_sym_head name="f_mode" id="0x1d" scope="0x0"/>
     <value_sym_head name="f_byte" id="0x1e" scope="0x0"/>
-    <userop_head name="bc2_memcpy" id="0x1f" scope="0x0"/>
+    <userop_head name="block_copy" id="0x1f" scope="0x0"/>
     <userop_head name="sleep" id="0x20" scope="0x0"/>
     <userop_head name="brk" id="0x21" scope="0x0"/>
     <userop_head name="sif" id="0x22" scope="0x0"/>
@@ -319,9 +319,44 @@
         <print piece="bc"/>
         <construct_tpl>
           <null/>
+          <op_tpl code="CALLOTHER">
+            <null/>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x0"/>
+              <const_real val="0x4"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0x8"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0x4"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0x0"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+          </op_tpl>
+          <op_tpl code="COPY">
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0x0"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x0"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+          </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="130">
+      <constructor parent="0x0" first="1" length="2" source="0" line="133">
         <print piece="bc2"/>
         <construct_tpl>
           <null/>
@@ -362,7 +397,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="136">
+      <constructor parent="0x0" first="1" length="2" source="0" line="139">
         <oper id="0x43"/>
         <oper id="0x44"/>
         <print piece="ld"/>
@@ -538,7 +573,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="137">
+      <constructor parent="0x0" first="1" length="2" source="0" line="140">
         <oper id="0x45"/>
         <oper id="0x46"/>
         <print piece="ld"/>
@@ -714,7 +749,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="138">
+      <constructor parent="0x0" first="1" length="2" source="0" line="141">
         <oper id="0x47"/>
         <oper id="0x48"/>
         <print piece="ld"/>
@@ -747,7 +782,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="140">
+      <constructor parent="0x0" first="1" length="2" source="0" line="143">
         <oper id="0x49"/>
         <oper id="0x4a"/>
         <print piece="st"/>
@@ -923,7 +958,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="141">
+      <constructor parent="0x0" first="1" length="2" source="0" line="144">
         <oper id="0x4b"/>
         <oper id="0x4c"/>
         <print piece="st"/>
@@ -1099,7 +1134,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="142">
+      <constructor parent="0x0" first="1" length="2" source="0" line="145">
         <oper id="0x4d"/>
         <oper id="0x4e"/>
         <print piece="st"/>
@@ -1132,7 +1167,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="145">
+      <constructor parent="0x0" first="1" length="2" source="0" line="148">
         <oper id="0x4f"/>
         <oper id="0x50"/>
         <print piece="add"/>
@@ -1519,7 +1554,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="151">
+      <constructor parent="0x0" first="1" length="2" source="0" line="154">
         <oper id="0x51"/>
         <oper id="0x52"/>
         <print piece="addc"/>
@@ -1986,7 +2021,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="157">
+      <constructor parent="0x0" first="1" length="2" source="0" line="160">
         <oper id="0x53"/>
         <oper id="0x54"/>
         <print piece="sub"/>
@@ -2373,7 +2408,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="163">
+      <constructor parent="0x0" first="1" length="2" source="0" line="166">
         <oper id="0x55"/>
         <oper id="0x56"/>
         <print piece="subc"/>
@@ -2840,7 +2875,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="169">
+      <constructor parent="0x0" first="1" length="2" source="0" line="172">
         <oper id="0x57"/>
         <oper id="0x58"/>
         <print piece="nadd"/>
@@ -3239,7 +3274,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="175">
+      <constructor parent="0x0" first="1" length="2" source="0" line="178">
         <oper id="0x59"/>
         <oper id="0x5a"/>
         <print piece="cmp"/>
@@ -3614,7 +3649,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="180">
+      <constructor parent="0x0" first="1" length="2" source="0" line="183">
         <oper id="0x5b"/>
         <oper id="0x5c"/>
         <print piece="or"/>
@@ -4001,7 +4036,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="186">
+      <constructor parent="0x0" first="1" length="2" source="0" line="189">
         <oper id="0x5d"/>
         <oper id="0x5e"/>
         <print piece="and"/>
@@ -4388,7 +4423,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="192">
+      <constructor parent="0x0" first="1" length="2" source="0" line="195">
         <oper id="0x5f"/>
         <oper id="0x60"/>
         <print piece="xor"/>
@@ -4775,7 +4810,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="199">
+      <constructor parent="0x0" first="1" length="2" source="0" line="202">
         <oper id="0x61"/>
         <print piece="umult"/>
         <print piece=" "/>
@@ -4833,7 +4868,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="200">
+      <constructor parent="0x0" first="1" length="2" source="0" line="203">
         <oper id="0x62"/>
         <print piece="smult"/>
         <print piece=" "/>
@@ -4891,7 +4926,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="204">
+      <constructor parent="0x0" first="1" length="2" source="0" line="207">
         <oper id="0x63"/>
         <print piece="udiv"/>
         <print piece=" "/>
@@ -5029,7 +5064,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="214">
+      <constructor parent="0x0" first="1" length="2" source="0" line="217">
         <oper id="0x64"/>
         <print piece="sdiv"/>
         <print piece=" "/>
@@ -5167,7 +5202,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="225">
+      <constructor parent="0x0" first="1" length="2" source="0" line="228">
         <oper id="0x65"/>
         <print piece="tst"/>
         <print piece=" "/>
@@ -5327,7 +5362,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="231">
+      <constructor parent="0x0" first="1" length="2" source="0" line="234">
         <oper id="0x66"/>
         <print piece="asl"/>
         <print piece=" "/>
@@ -5749,7 +5784,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="239">
+      <constructor parent="0x0" first="1" length="2" source="0" line="242">
         <oper id="0x67"/>
         <print piece="asr"/>
         <print piece=" "/>
@@ -6171,7 +6206,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="247">
+      <constructor parent="0x0" first="1" length="2" source="0" line="250">
         <oper id="0x68"/>
         <print piece="lsr"/>
         <print piece=" "/>
@@ -6593,7 +6628,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="254">
+      <constructor parent="0x0" first="1" length="2" source="0" line="257">
         <oper id="0x69"/>
         <print piece="rol"/>
         <print piece=" "/>
@@ -7066,7 +7101,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="261">
+      <constructor parent="0x0" first="1" length="2" source="0" line="264">
         <oper id="0x6a"/>
         <print piece="ror"/>
         <print piece=" "/>
@@ -7539,7 +7574,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="274">
+      <constructor parent="0x0" first="1" length="2" source="0" line="277">
         <oper id="0x6b"/>
         <print piece="bsr"/>
         <print piece=" "/>
@@ -7581,7 +7616,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="280">
+      <constructor parent="0x0" first="1" length="2" source="0" line="283">
         <oper id="0x6c"/>
         <print piece="bsr"/>
         <print piece=" "/>
@@ -7623,7 +7658,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="286">
+      <constructor parent="0x0" first="1" length="2" source="0" line="289">
         <oper id="0x6d"/>
         <print piece="bra"/>
         <print piece=" "/>
@@ -7648,7 +7683,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="287">
+      <constructor parent="0x0" first="1" length="2" source="0" line="290">
         <oper id="0x6e"/>
         <print piece="bra"/>
         <print piece=" "/>
@@ -7673,7 +7708,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="288">
+      <constructor parent="0x0" first="1" length="2" source="0" line="291">
         <oper id="0x6f"/>
         <print piece="bra"/>
         <print piece=" "/>
@@ -7698,7 +7733,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="289">
+      <constructor parent="0x0" first="1" length="2" source="0" line="292">
         <print piece="rts"/>
         <construct_tpl>
           <null/>
@@ -7712,7 +7747,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="293">
+      <constructor parent="0x0" first="1" length="2" source="0" line="296">
         <oper id="0x70"/>
         <print piece="blt"/>
         <print piece=" "/>
@@ -7810,7 +7845,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="294">
+      <constructor parent="0x0" first="1" length="2" source="0" line="297">
         <oper id="0x71"/>
         <print piece="blt"/>
         <print piece=" "/>
@@ -7916,7 +7951,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="295">
+      <constructor parent="0x0" first="1" length="2" source="0" line="298">
         <print piece="blt"/>
         <print piece=" "/>
         <print piece="0,x"/>
@@ -8013,7 +8048,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="299">
+      <constructor parent="0x0" first="1" length="2" source="0" line="302">
         <oper id="0x72"/>
         <print piece="bpl"/>
         <print piece=" "/>
@@ -8111,7 +8146,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="300">
+      <constructor parent="0x0" first="1" length="2" source="0" line="303">
         <oper id="0x73"/>
         <print piece="bpl"/>
         <print piece=" "/>
@@ -8217,7 +8252,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="301">
+      <constructor parent="0x0" first="1" length="2" source="0" line="304">
         <print piece="bpl"/>
         <print piece=" "/>
         <print piece="0,x"/>
@@ -8314,7 +8349,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="305">
+      <constructor parent="0x0" first="1" length="2" source="0" line="308">
         <oper id="0x74"/>
         <print piece="bmi"/>
         <print piece=" "/>
@@ -8412,7 +8447,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="306">
+      <constructor parent="0x0" first="1" length="2" source="0" line="309">
         <oper id="0x75"/>
         <print piece="bmi"/>
         <print piece=" "/>
@@ -8518,7 +8553,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="307">
+      <constructor parent="0x0" first="1" length="2" source="0" line="310">
         <print piece="bmi"/>
         <print piece=" "/>
         <print piece="0,x"/>
@@ -8615,7 +8650,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="311">
+      <constructor parent="0x0" first="1" length="2" source="0" line="314">
         <oper id="0x76"/>
         <print piece="bne"/>
         <print piece=" "/>
@@ -8696,7 +8731,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="312">
+      <constructor parent="0x0" first="1" length="2" source="0" line="315">
         <oper id="0x77"/>
         <print piece="bne"/>
         <print piece=" "/>
@@ -8785,7 +8820,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="313">
+      <constructor parent="0x0" first="1" length="2" source="0" line="316">
         <print piece="bne"/>
         <print piece=" "/>
         <print piece="0,x"/>
@@ -8865,7 +8900,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="317">
+      <constructor parent="0x0" first="1" length="2" source="0" line="320">
         <oper id="0x78"/>
         <print piece="beq"/>
         <print piece=" "/>
@@ -8946,7 +8981,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="318">
+      <constructor parent="0x0" first="1" length="2" source="0" line="321">
         <oper id="0x79"/>
         <print piece="beq"/>
         <print piece=" "/>
@@ -9035,7 +9070,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="319">
+      <constructor parent="0x0" first="1" length="2" source="0" line="322">
         <print piece="beq"/>
         <print piece=" "/>
         <print piece="0,x"/>
@@ -9115,7 +9150,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="323">
+      <constructor parent="0x0" first="1" length="2" source="0" line="326">
         <oper id="0x7a"/>
         <print piece="bcc"/>
         <print piece=" "/>
@@ -9213,7 +9248,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="324">
+      <constructor parent="0x0" first="1" length="2" source="0" line="327">
         <oper id="0x7b"/>
         <print piece="bcc"/>
         <print piece=" "/>
@@ -9319,7 +9354,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="325">
+      <constructor parent="0x0" first="1" length="2" source="0" line="328">
         <print piece="bcc"/>
         <print piece=" "/>
         <print piece="0,x"/>
@@ -9416,7 +9451,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="329">
+      <constructor parent="0x0" first="1" length="2" source="0" line="332">
         <oper id="0x7c"/>
         <print piece="bcs"/>
         <print piece=" "/>
@@ -9514,7 +9549,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="330">
+      <constructor parent="0x0" first="1" length="2" source="0" line="333">
         <oper id="0x7d"/>
         <print piece="bcs"/>
         <print piece=" "/>
@@ -9620,7 +9655,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="331">
+      <constructor parent="0x0" first="1" length="2" source="0" line="334">
         <print piece="bcs"/>
         <print piece=" "/>
         <print piece="0,x"/>
@@ -9717,7 +9752,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="334">
+      <constructor parent="0x0" first="1" length="2" source="0" line="337">
         <oper id="0x7e"/>
         <print piece="bgt"/>
         <print piece=" "/>
@@ -9883,7 +9918,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="335">
+      <constructor parent="0x0" first="1" length="2" source="0" line="338">
         <oper id="0x7f"/>
         <print piece="bge"/>
         <print piece=" "/>
@@ -9981,7 +10016,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="336">
+      <constructor parent="0x0" first="1" length="2" source="0" line="339">
         <oper id="0x80"/>
         <print piece="ble"/>
         <print piece=" "/>
@@ -10147,7 +10182,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="337">
+      <constructor parent="0x0" first="1" length="2" source="0" line="340">
         <oper id="0x81"/>
         <print piece="bcz"/>
         <print piece=" "/>
@@ -10313,7 +10348,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="340">
+      <constructor parent="0x0" first="1" length="2" source="0" line="343">
         <print piece="brxl"/>
         <construct_tpl>
           <null/>
@@ -10373,7 +10408,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="346">
+      <constructor parent="0x0" first="1" length="2" source="0" line="349">
         <oper id="0x82"/>
         <print piece="rti"/>
         <print piece=" "/>
@@ -10410,7 +10445,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="354">
+      <constructor parent="0x0" first="1" length="2" source="0" line="357">
         <oper id="0x83"/>
         <print piece="enter"/>
         <print piece=" "/>
@@ -10480,7 +10515,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="359">
+      <constructor parent="0x0" first="1" length="2" source="0" line="362">
         <oper id="0x84"/>
         <print piece="leave"/>
         <print piece=" "/>
@@ -10557,7 +10592,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="369">
+      <constructor parent="0x0" first="1" length="2" source="0" line="372">
         <oper id="0x88"/>
         <print piece="enterl"/>
         <print piece=" "/>
@@ -10662,7 +10697,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="375">
+      <constructor parent="0x0" first="1" length="2" source="0" line="378">
         <oper id="0x89"/>
         <print piece="leavel"/>
         <print piece=" "/>
@@ -13158,7 +13193,7 @@
       <operand_exp index="0" table="0x0" ct="0x43"/>
     </operand_sym>
     <subtable_sym id="0x85" numct="1">
-      <constructor parent="0x85" first="1" length="2" source="0" line="367">
+      <constructor parent="0x85" first="1" length="2" source="0" line="370">
         <oper id="0x87"/>
         <oper id="0x86"/>
         <opprint id="1"/>

@@ -40,7 +40,7 @@ define token opc (16)
     f_byte=(0,7)
 ;
 
-define pcodeop bc2_memcpy;
+define pcodeop block_copy;
 define pcodeop sleep;
 define pcodeop brk;
 define pcodeop sif;
@@ -126,10 +126,13 @@ macro shiftflags(value) {
 :brk                        is f_all=0x0004                    { brk(); }    # Breakpoint
 :sleep                      is f_all=0x0008                    { sleep(); }
 :sif                        is f_all=0x000c                    { sif(); }    # Perform SIF (serial interface) cycle
-:bc                         is f_all=0xff09                    { }
+:bc                         is f_all=0xff09                    {
+    block_copy(y, xl, al);  # dst=y, src=xl, count=al
+    al = 0;                 # al zeroed on return
+}
 :bc2                        is f_all=0xfd09 {
-    bc2_memcpy(ah, xl, al); # dst=AH, src=X, count=AL
-    al = 0;                 # AL zeroed on return
+    block_copy(ah, xl, al); # dst=ah, src=xl, count=al
+    al = 0;                 # al zeroed on return
 }
 
 ## Load / Store
