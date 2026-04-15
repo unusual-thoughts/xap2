@@ -427,11 +427,13 @@ macro shiftflags(value) {
 }
 
 :enterl imm is f_byte=0x0b & imm {
+    *[mem]:2 (y - 1) = xl;
     y = y + imm;
 }
 
 :leavel imm is f_byte=0x0f & imm {
     y = y - imm;
+    xl = *[mem]:2 (y - 1);
     return [x];
 }
 

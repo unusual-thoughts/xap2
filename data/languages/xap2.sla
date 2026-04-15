@@ -1,5 +1,5 @@
 
-<sleigh version="4" bigendian="false" align="2" uniqbase="0xf500">
+<sleigh version="4" bigendian="false" align="2" uniqbase="0xf800">
   <sourcefiles>
     <sourcefile name="xap2.slaspec" index="0"/>
   </sourcefiles>
@@ -9097,6 +9097,41 @@
               <const_real val="0x4"/>
             </varnode_tpl>
           </op_tpl>
+          <op_tpl code="INT_SUB">
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xd300"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0x8"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x1"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+          </op_tpl>
+          <op_tpl code="STORE">
+            <null/>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_spaceid space="mem"/>
+              <const_real val="0x8"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xd300"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0x4"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+          </op_tpl>
           <op_tpl code="INT_ADD">
             <varnode_tpl>
               <const_spaceid space="register"/>
@@ -9116,7 +9151,7 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="433">
+      <constructor parent="0x0" first="1" length="2" source="0" line="434">
         <oper id="0x86"/>
         <print piece="leavel"/>
         <print piece=" "/>
@@ -9148,6 +9183,40 @@
               <const_handle val="0" s="2"/>
             </varnode_tpl>
           </op_tpl>
+          <op_tpl code="INT_SUB">
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xd600"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0x8"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x1"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+          </op_tpl>
+          <op_tpl code="LOAD">
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0x4"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_spaceid space="mem"/>
+              <const_real val="0x8"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xd600"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+          </op_tpl>
           <op_tpl code="RETURN">
             <null/>
             <varnode_tpl>
@@ -9158,14 +9227,14 @@
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="438">
+      <constructor parent="0x0" first="1" length="2" source="0" line="440">
         <print piece="brxl"/>
         <construct_tpl>
           <null/>
           <op_tpl code="INT_RIGHT">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xd500"/>
+              <const_real val="0xd800"/>
               <const_real val="0x3"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9182,7 +9251,7 @@
           <op_tpl code="INT_SEXT">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xd600"/>
+              <const_real val="0xd900"/>
               <const_real val="0x3"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9194,17 +9263,17 @@
           <op_tpl code="INT_ADD">
             <varnode_tpl>
               <const_spaceid space="unique"/>
+              <const_real val="0xdb00"/>
+              <const_real val="0x3"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
               <const_real val="0xd800"/>
               <const_real val="0x3"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xd500"/>
-              <const_real val="0x3"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xd600"/>
+              <const_real val="0xd900"/>
               <const_real val="0x3"/>
             </varnode_tpl>
           </op_tpl>
@@ -9212,13 +9281,13 @@
             <null/>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xd800"/>
+              <const_real val="0xdb00"/>
               <const_real val="0x3"/>
             </varnode_tpl>
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="443">
+      <constructor parent="0x0" first="1" length="2" source="0" line="445">
         <oper id="0x87"/>
         <print piece="bgt"/>
         <print piece=" "/>
@@ -9236,7 +9305,7 @@
           <op_tpl code="INT_RIGHT">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xd900"/>
+              <const_real val="0xdc00"/>
               <const_real val="0x2"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9248,57 +9317,6 @@
               <const_spaceid space="const"/>
               <const_real val="0x2"/>
               <const_real val="0x4"/>
-            </varnode_tpl>
-          </op_tpl>
-          <op_tpl code="SUBPIECE">
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xda00"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xd900"/>
-              <const_real val="0x2"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="const"/>
-              <const_real val="0x0"/>
-              <const_real val="0x4"/>
-            </varnode_tpl>
-          </op_tpl>
-          <op_tpl code="INT_AND">
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xdb00"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xda00"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="const"/>
-              <const_real val="0x1"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-          </op_tpl>
-          <op_tpl code="INT_EQUAL">
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xdc00"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xdb00"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="const"/>
-              <const_real val="0x0"/>
-              <const_real val="0x1"/>
             </varnode_tpl>
           </op_tpl>
           <op_tpl code="SUBPIECE">
@@ -9308,8 +9326,8 @@
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
-              <const_spaceid space="register"/>
-              <const_real val="0xc"/>
+              <const_spaceid space="unique"/>
+              <const_real val="0xdc00"/>
               <const_real val="0x2"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9344,6 +9362,57 @@
             <varnode_tpl>
               <const_spaceid space="unique"/>
               <const_real val="0xde00"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x0"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+          </op_tpl>
+          <op_tpl code="SUBPIECE">
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xe000"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0xc"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x0"/>
+              <const_real val="0x4"/>
+            </varnode_tpl>
+          </op_tpl>
+          <op_tpl code="INT_AND">
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xe100"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xe000"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x1"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+          </op_tpl>
+          <op_tpl code="INT_EQUAL">
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xe200"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xe100"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9355,17 +9424,17 @@
           <op_tpl code="BOOL_AND">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe000"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xdc00"/>
+              <const_real val="0xe300"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
               <const_real val="0xdf00"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xe200"/>
               <const_real val="0x1"/>
             </varnode_tpl>
           </op_tpl>
@@ -9378,13 +9447,13 @@
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe000"/>
+              <const_real val="0xe300"/>
               <const_real val="0x1"/>
             </varnode_tpl>
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="447">
+      <constructor parent="0x0" first="1" length="2" source="0" line="449">
         <oper id="0x88"/>
         <print piece="bge"/>
         <print piece=" "/>
@@ -9402,7 +9471,7 @@
           <op_tpl code="INT_RIGHT">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe100"/>
+              <const_real val="0xe400"/>
               <const_real val="0x2"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9419,12 +9488,12 @@
           <op_tpl code="SUBPIECE">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe200"/>
+              <const_real val="0xe500"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe100"/>
+              <const_real val="0xe400"/>
               <const_real val="0x2"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9436,12 +9505,12 @@
           <op_tpl code="INT_AND">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe300"/>
+              <const_real val="0xe600"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe200"/>
+              <const_real val="0xe500"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9453,12 +9522,12 @@
           <op_tpl code="INT_EQUAL">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe400"/>
+              <const_real val="0xe700"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe300"/>
+              <const_real val="0xe600"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9476,13 +9545,13 @@
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe400"/>
+              <const_real val="0xe700"/>
               <const_real val="0x1"/>
             </varnode_tpl>
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="451">
+      <constructor parent="0x0" first="1" length="2" source="0" line="453">
         <oper id="0x89"/>
         <print piece="ble"/>
         <print piece=" "/>
@@ -9500,7 +9569,7 @@
           <op_tpl code="INT_RIGHT">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xe500"/>
+              <const_real val="0xe800"/>
               <const_real val="0x2"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9512,57 +9581,6 @@
               <const_spaceid space="const"/>
               <const_real val="0x2"/>
               <const_real val="0x4"/>
-            </varnode_tpl>
-          </op_tpl>
-          <op_tpl code="SUBPIECE">
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xe600"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xe500"/>
-              <const_real val="0x2"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="const"/>
-              <const_real val="0x0"/>
-              <const_real val="0x4"/>
-            </varnode_tpl>
-          </op_tpl>
-          <op_tpl code="INT_AND">
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xe700"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xe600"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="const"/>
-              <const_real val="0x1"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-          </op_tpl>
-          <op_tpl code="INT_EQUAL">
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xe800"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xe700"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="const"/>
-              <const_real val="0x1"/>
-              <const_real val="0x1"/>
             </varnode_tpl>
           </op_tpl>
           <op_tpl code="SUBPIECE">
@@ -9572,8 +9590,8 @@
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
-              <const_spaceid space="register"/>
-              <const_real val="0xc"/>
+              <const_spaceid space="unique"/>
+              <const_real val="0xe800"/>
               <const_real val="0x2"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9608,6 +9626,57 @@
             <varnode_tpl>
               <const_spaceid space="unique"/>
               <const_real val="0xea00"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x1"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+          </op_tpl>
+          <op_tpl code="SUBPIECE">
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xec00"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="register"/>
+              <const_real val="0xc"/>
+              <const_real val="0x2"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x0"/>
+              <const_real val="0x4"/>
+            </varnode_tpl>
+          </op_tpl>
+          <op_tpl code="INT_AND">
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xed00"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xec00"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="const"/>
+              <const_real val="0x1"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+          </op_tpl>
+          <op_tpl code="INT_EQUAL">
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xee00"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xed00"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9619,17 +9688,17 @@
           <op_tpl code="BOOL_OR">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xec00"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xe800"/>
+              <const_real val="0xef00"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
               <const_real val="0xeb00"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xee00"/>
               <const_real val="0x1"/>
             </varnode_tpl>
           </op_tpl>
@@ -9642,13 +9711,13 @@
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xec00"/>
+              <const_real val="0xef00"/>
               <const_real val="0x1"/>
             </varnode_tpl>
           </op_tpl>
         </construct_tpl>
       </constructor>
-      <constructor parent="0x0" first="1" length="2" source="0" line="455">
+      <constructor parent="0x0" first="1" length="2" source="0" line="457">
         <oper id="0x8a"/>
         <print piece="bcz"/>
         <print piece=" "/>
@@ -9666,7 +9735,7 @@
           <op_tpl code="INT_RIGHT">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xed00"/>
+              <const_real val="0xf000"/>
               <const_real val="0x2"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9683,12 +9752,12 @@
           <op_tpl code="SUBPIECE">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xee00"/>
+              <const_real val="0xf100"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xed00"/>
+              <const_real val="0xf000"/>
               <const_real val="0x2"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9700,12 +9769,12 @@
           <op_tpl code="INT_AND">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xef00"/>
+              <const_real val="0xf200"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xee00"/>
+              <const_real val="0xf100"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9717,12 +9786,12 @@
           <op_tpl code="INT_EQUAL">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xf000"/>
+              <const_real val="0xf300"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xef00"/>
+              <const_real val="0xf200"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9734,7 +9803,7 @@
           <op_tpl code="SUBPIECE">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xf100"/>
+              <const_real val="0xf400"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9751,12 +9820,12 @@
           <op_tpl code="INT_AND">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xf200"/>
+              <const_real val="0xf500"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xf100"/>
+              <const_real val="0xf400"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9768,12 +9837,12 @@
           <op_tpl code="INT_EQUAL">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xf300"/>
+              <const_real val="0xf600"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xf200"/>
+              <const_real val="0xf500"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
@@ -9785,17 +9854,17 @@
           <op_tpl code="BOOL_OR">
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xf400"/>
-              <const_real val="0x1"/>
-            </varnode_tpl>
-            <varnode_tpl>
-              <const_spaceid space="unique"/>
-              <const_real val="0xf000"/>
+              <const_real val="0xf700"/>
               <const_real val="0x1"/>
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
               <const_real val="0xf300"/>
+              <const_real val="0x1"/>
+            </varnode_tpl>
+            <varnode_tpl>
+              <const_spaceid space="unique"/>
+              <const_real val="0xf600"/>
               <const_real val="0x1"/>
             </varnode_tpl>
           </op_tpl>
@@ -9808,7 +9877,7 @@
             </varnode_tpl>
             <varnode_tpl>
               <const_spaceid space="unique"/>
-              <const_real val="0xf400"/>
+              <const_real val="0xf700"/>
               <const_real val="0x1"/>
             </varnode_tpl>
           </op_tpl>
