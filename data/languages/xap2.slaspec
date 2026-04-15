@@ -15,13 +15,14 @@ define bitrange
     c=flags[3,1]
 ;
 
-define register offset=0x100 size=4 contextreg;
-define register offset=0x200 size=2 [s0 s1 s2 s3 s4 s5];
+define register offset=0x100 size=8 contextreg;
+define register offset=0x200 size=2 [s0 s1 s2 s3 s4 s5]; # scratch pseudo-registers
 
 define context contextreg
     ext=(0,15) signed noflow
     u=(16,16) noflow
     num_prefix=(17,18) noflow
+    _imm=(19,42) signed noflow
 ;
 
 define token opc (16)
@@ -47,76 +48,42 @@ attach variables [ f_mode ] [ _  _  xl y ];
 attach variables [ f_ld ] [ _ _ _ _ _ flags xl y _ _ _ _ _ _ xh _ ];
 attach variables [ f_st ] [ _ flags xl y _ _ _ _ _ _ xh _ _ _ _ _ ];
 
-absaddr: val    is f_sopnd & ext
-[ val = (f_sopnd + (ext << 8)) & 0xffff; ]
-{ export *[const]:2 val; }
+simm24: val                 is ext & f_sopnd
+[ _imm = (ext * 256) + f_sopnd; val=_imm; ]                    { export *[const]:3 val; }
 
-simmval: val                is f_sopnd & ext
-[ val = f_sopnd + (ext << 8); ]
-{ export *[const]:2 val; }
+uimm16: val                 is simm24
+[ val = _imm & 0xffff; ]                                       { export *[const]:2 val; }
 
-imm: "#"simmval            is simmval                          { export simmval; }
+data:     "#"simm24         is f_mode=0 & simm24               { local tmp:2 = simm24:2; export tmp; }
+data:     "@XAP_AH"         is f_mode=1 & f_opnd=0xe0          { export ah; }
+data:     "@XAP_AL"         is f_mode=1 & f_opnd=0xe1          { export al; }
+data:     "@XAP_UXH"        is f_mode=1 & f_opnd=0xe2          { export xh; }
+data:     "@XAP_UXL"        is f_mode=1 & f_opnd=0xe3          { export xl; }
+data:     "@XAP_UY"         is f_mode=1 & f_opnd=0xe4          { export y; }
+data:     "@XAP_S0"         is f_mode=1 & f_opnd=0xf8          { export s0; }
+data:     "@XAP_S1"         is f_mode=1 & f_opnd=0xf9          { export s1; }
+data:     "@XAP_S2"         is f_mode=1 & f_opnd=0xfa          { export s2; }
+data:     "@XAP_S3"         is f_mode=1 & f_opnd=0xfb          { export s3; }
+data:     "@XAP_S4"         is f_mode=1 & f_opnd=0xfc          { export s4; }
+data:     "@XAP_S5"         is f_mode=1 & f_opnd=0xff          { export s5; }
+data:     "@H'"uimm16       is f_mode=1 & simm24 & uimm16      { export *[mem]:2 uimm16; }
+data:     "@(#"simm24^,"x)" is f_mode=2 & simm24               { local tmp:2 = xl + simm24:2; export *[mem]:2 tmp; }
+stackref: "@(#"simm24^,"y)" is simm24                          { local tmp:2 = y + simm24:2; export *[mem]:2 tmp; }
+data:     stackref          is f_mode=3 & stackref             { export stackref; }
 
-data: imm                  is f_mode=0 & imm                   { export imm; }
-data: "@XAP_AH"            is f_mode=1 & f_opnd=0xe0           { export ah; }
-data: "@XAP_AL"            is f_mode=1 & f_opnd=0xe1           { export al; }
-data: "@XAP_UXH"           is f_mode=1 & f_opnd=0xe2           { export xh; }
-data: "@XAP_UXL"           is f_mode=1 & f_opnd=0xe3           { export xl; }
-data: "@XAP_UY"            is f_mode=1 & f_opnd=0xe4           { export y; }
-data: "@XAP_S0"            is f_mode=1 & f_opnd=0xf8           { export s0; }
-data: "@XAP_S1"            is f_mode=1 & f_opnd=0xf9           { export s1; }
-data: "@XAP_S2"            is f_mode=1 & f_opnd=0xfa           { export s2; }
-data: "@XAP_S3"            is f_mode=1 & f_opnd=0xfb           { export s3; }
-data: "@XAP_S4"            is f_mode=1 & f_opnd=0xfc           { export s4; }
-data: "@XAP_S5"            is f_mode=1 & f_opnd=0xff           { export s5; }
-data: "@H'"absaddr         is f_mode=1 & absaddr               { export *[mem]:2 absaddr; }
+# Mode 0: relocatable jump/call:      PC <- PC + (1-3 byte signed offset)
+branch_addr: reloc          is f_mode=0 & num_prefix & simm24
+[ reloc = inst_start + num_prefix + _imm; ]                    { export *[code]:3 reloc; }
 
-off: val                   is f_sopnd & ext
-[ val = f_sopnd + (ext << 8); ]
-{ export *[const]:2 val; }
+# Mode 1: data indirect jump/call:    PC <- datamem[1-2 byte address] (16-bit destination)
+braddr_ind: "@H'"uimm16     is f_mode=1 & simm24 & uimm16      { local tmp:3 = zext(*[mem]:2 uimm16:2); export tmp; }
 
-boff: val                  is f_sopnd & ext
-[ val = f_sopnd + (ext << 8); ]
-{ export *[const]:3 val; }
-
-data: "@(#"off^,"x)"       is f_mode=2 & off
-{
-    local tmp:2 = xl + off;
-    export *[mem]:2 tmp;
-}
-
-stackref: "@(#"off^,"y)"   is off
-{
-    local tmp:2 = y + off;
-    export *[mem]:2 tmp;
-}
-
-data: stackref             is f_mode=3 & stackref              { export stackref; }
-
-# regular relocatable jump/call: PC <- PC + (1-3 byte signed offset)
-branch_addr: reloc         is f_mode=0 & f_sopnd & ext & num_prefix
-[ reloc = inst_start + num_prefix + f_sopnd + (ext << 8); ]
-{ export *[code]:3 reloc; }
-
-# special relative jump/call:    PC <- X  + (1-3 byte signed offset)
+# Mode 2: special relative jump/call: PC <- X  + (1-3 byte signed offset)
 # used for long function pointers, and rts which is an alias for bra 0,x
-branch_addr: boff^",x"     is f_mode=2 & boff
-{
-    local tmp:3 = x:3 + boff;
-    export *[code]:3 tmp;
-}
+branch_addr: simm24^",x"    is f_mode=2 & simm24               { local tmp:3 = x:3 + simm24; export *[code]:3 tmp; }
 
-# data indirect jump/call:       PC <- datamem[1-2 byte address] (16-bit destination, XH set separately)
-braddr_ind: "@H'"absaddr   is f_mode=1 & absaddr {
-    local tmp:3 = zext(*[mem]:2 absaddr);
-    export tmp;
-}
-
-# stack indirect jump/call:      PC <- datamem[y + 1-2 byte signed offset] (16-bit destination)
-braddr_ind: "@(#"off^",y)" is f_mode=3 & off {
-    local tmp:3 = zext(*[mem]:2 (y + off));
-    export tmp;
-}
+# Mode 3: stack indirect jump/call:   PC <- datamem[y + 1-2 byte signed offset] (16-bit destination)
+braddr_ind: stackref        is f_mode=3 & stackref             { local tmp:3 = zext(*[mem]:2 (y + stackref)); export tmp; }
 
 macro nzflags(value) {
     n = value s< 0;
@@ -141,178 +108,125 @@ macro shiftflags(value) {
     s = n;
 }
 
-:^instruction is (f_byte=0 & f_sopnd); instruction
+# operand extension pseudo-instruction, adds a byte to the operand
+:^instruction               is (f_byte=0 & f_sopnd); instruction
 [
-    ext = (ext << 8) + f_sopnd;
+    ext = (ext * 256) + f_sopnd;
     num_prefix = num_prefix + 1;
-]
-{
-    build instruction;
+]                                                              { build instruction; }
+
+# "Unsigned" prefix pseudo-instruction before arithmetic instructions
+:^instruction               is f_all=0x0009; instruction
+[ u = 1; ]                                                     { build instruction; }
+
+## Special instructions
+:nop                        is f_all=0x0000 & num_prefix=0     { }
+:brk                        is f_all=0x0004                    { brk(); }    # Breakpoint
+:sleep                      is f_all=0x0008                    { sleep(); }
+:sif                        is f_all=0x000c                    { sif(); }    # Perform SIF (serial interface) cycle
+:bc                         is f_all=0xff09                    { }
+:bc2                        is f_all=0xfd09 {
+    bc2_memcpy(ah, xl, al); # dst=AH, src=X, count=AL
+    al = 0;                 # AL zeroed on return
 }
 
-# TODO: Figure out what bc does (same as bc2?)
-:bc  is f_all=0xff09 {}
+## Load / Store
+:ld       f_reg, data       is f_opc=1 & f_reg & data              { f_reg = data; nzflags(f_reg); }   # normal register
+:ld       f_ld, stackref    is f_opc=0 & f_ld & f_mid=3 & stackref { f_ld = stackref; nzflags(f_ld); } # special register encoding
+:ld       f_ld, stackref    is f_byte=0x05 & f_ld & stackref       { f_ld = stackref; }                # flags
 
-:bc2 is f_all=0xfd09 {
-    # dst=AH, src=X, count=AL
-    bc2_memcpy(ah, xl, al);
-    # AL zeroed on return
-    al = 0;
-}
+:st       f_reg, data       is f_opc=2 & f_reg & data & f_mode!=0  { data = f_reg; nzflags(f_reg); }   # normal register
+:st       f_st, stackref    is f_opc=0 & f_st & f_mid=1 & stackref { f_st = stackref; nzflags(f_st); } # special register encoding
+:st       f_st, stackref    is f_byte=0x01 & f_st & stackref       { f_st = stackref; }                # flags
 
-:nop is f_all=0x0000 & num_prefix=0 {}
-
-:sleep is f_all=0x0008 {
-    sleep();
-}
-
-# Breakpoint
-:brk is f_all=0x0004 {
-    brk();
-}
-
-# Perform SIF (serial interface) cycle
-:sif is f_all=0x000c {
-    sif();
-}
-
-# Return from interrupt
-:rti is f_byte=0x0d & data {
-    flags = data;
-    return [x];
-}
-
-:ld f_ld, stackref is f_byte=0x05 & f_ld & stackref {
-    f_ld = stackref;
-}
-
-:ld f_ld, stackref is f_opc=0 & f_ld & f_mid=3 & stackref {
-    f_ld = stackref;
-    nzflags(f_ld);
-}
-
-:ld f_reg, data is f_opc=1 & f_reg & data {
-    f_reg = data;
-    nzflags(f_reg);
-}
-
-:st f_st, stackref is f_byte=0x01 & f_st & stackref {
-    f_st = stackref;
-}
-
-:st f_st, stackref is f_opc=0 & f_st & f_mid=1 & stackref {
-    f_st = stackref;
-    nzflags(f_st);
-}
-
-:st f_reg, data is f_opc=2 & f_reg & data & f_mode!=0 {
-    data = f_reg;
-    nzflags(f_reg);
-}
-
-:add f_reg, data is f_opc=3 & f_reg & data {
+## Arithmetic
+:add      f_reg, data       is f_opc=3 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg + data;
     addflags(tmp, data, f_reg);
 }
 
-:addc f_reg, data is f_opc=4 & f_reg & data {
+:addc     f_reg, data       is f_opc=4 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg + data + zext(c);
     addflags(tmp, data, f_reg);
 }
 
-:sub f_reg, data is f_opc=5 & f_reg & data {
+:sub      f_reg, data       is f_opc=5 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg - data;
     subflags(tmp, data, f_reg);
 }
 
-:subc f_reg, data is f_opc=6 & f_reg & data {
+:subc     f_reg, data       is f_opc=6 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg - data - zext(c);
     subflags(tmp, data, f_reg);
 }
 
-:nadd f_reg, data is f_opc=7 & f_reg & data {
+:nadd     f_reg, data       is f_opc=7 & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = -f_reg + data;
     subflags(tmp, data, f_reg);
 }
 
-:cmp f_reg, data is f_opc=8 & f_reg & data {
+:cmp      f_reg, data       is f_opc=8 & f_reg & data {
     local tmp:2 = f_reg - data;
     subflags(f_reg, data, tmp);
 }
 
-:or f_reg, data is f_opc=0xb & f_reg & data {
+:or       f_reg, data       is f_opc=0xb & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg | data;
     addflags(tmp, data, f_reg);
 }
 
-:and f_reg, data is f_opc=0xc & f_reg & data {
+:and      f_reg, data       is f_opc=0xc & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg & data;
     addflags(tmp, data, f_reg);
 }
 
-:xor f_reg, data is f_opc=0xd & f_reg & data {
+:xor      f_reg, data       is f_opc=0xd & f_reg & data {
     local tmp:2 = f_reg;
     f_reg = f_reg ^ data;
     addflags(tmp, data, f_reg);
 }
 
-:^instruction is f_all=0x0009; instruction
-[ u = 1; ]
-{
-    build instruction;
+with : f_opc=0x9 & f_reg=0 {
+    :umult data             is u=1 & data                      { a = zext(al) * zext(data); }
+    :smult data             is u=0 & data                      { a = sext(al) * sext(data); }
 }
 
-:umult data is u=1 & f_opc=9 & f_reg=0 & data {
-    a = zext(al) * zext(data);
+with : f_opc=0x9 & f_reg=1 {
+    :udiv data              is u=1 & data {
+        a = a >> 1;
+
+        local tmp:4 = a / zext(data);
+        al = tmp:2;
+
+        tmp = (a % zext(data)) << 1;
+        ah = ah | tmp:2;
+    }
+
+    :sdiv data              is u=0 & f_reg=1 & data {
+        a = a s>> 1;
+
+        local tmp:4 = a s/ sext(data);
+        al = tmp:2;
+
+        tmp = (a s% sext(data)) << 1;
+        ah = ah | tmp:2;
+    }
 }
 
-:smult data is u=0 & f_opc=9 & f_reg=0 & data {
-    a = sext(al) * sext(data);
-}
-
-:udiv data is u=1 & f_opc=9 & f_reg=1 & data {
-    a = a >> 1;
-
-    local tmp:4 = a / zext(data);
-    al = tmp:2;
-
-    tmp = (a % zext(data)) << 1;
-    ah = ah | tmp:2;
-}
-
-:sdiv data is u=0 & f_opc=9 & f_reg=1 & data {
-    a = a s>> 1;
-
-    local tmp:4 = a s/ sext(data);
-    al = tmp:2;
-
-    tmp = (a s% sext(data)) << 1;
-    ah = ah | tmp:2;
-}
-
-:tst data is f_opc=9 & f_reg=2 & data {
+:tst      data              is f_opc=9 & f_reg=2 & data {
     nzflags(data);
 }
 
-:bsr branch_addr is f_opc=9 & f_reg=3 & branch_addr {
-    x = inst_next >> 1;
-    call branch_addr;
-}
-
-:bsr braddr_ind is f_opc=9 & f_reg=3 & braddr_ind {
-    x = inst_next >> 1;
-    call [braddr_ind];
-}
 
 # arithmetic/logical shift left, zero-extended
-:asl data is f_opc=0xa & f_reg=0 & data {
+:asl      data              is f_opc=0xa & f_reg=0 & data {
     local tmp:4 = a << (data - 1);
     c = tmp[31,1];
     a = a << data;
@@ -320,7 +234,7 @@ macro shiftflags(value) {
 }
 
 # arithmetic shift right, sign-extended
-:asr data is u=0 & f_opc=0xa & f_reg=1 & data {
+:asr      data              is u=0 & f_opc=0xa & f_reg=1 & data {
     local tmp:4 = a >> (data - 1);
     c = tmp[0,1];
     a = a s>> data;
@@ -328,137 +242,118 @@ macro shiftflags(value) {
 }
 
 # logical shift right, zero-extended
-:lsr data is u=1 & f_opc=0xa & f_reg=1 & data {
+:lsr      data              is u=1 & f_opc=0xa & f_reg=1 & data {
     local tmp:4 = a >> (data - 1);
     c = tmp[0,1];
     a = a >> data;
     shiftflags(a);
 }
 
-:rol data is f_opc=0xa & f_reg=2 & data {
+:rol      data              is f_opc=0xa & f_reg=2 & data {
     local tmp:4 = a << (data - 1);
     c = tmp[31,1];
     a = (a << data) | (a >> (32 - data));
     shiftflags(a);
 }
 
-:ror data is f_opc=0xa & f_reg=3 & data {
+:ror      data              is f_opc=0xa & f_reg=3 & data {
     local tmp:4 = a >> (data - 1);
     c = tmp[0,1];
     a = (a >> data) | (a << (32 - data));
     shiftflags(a);
 }
 
-:rts is f_all=0x00e2 {
-    return [x];
+## Calls / Branches / Returns
+macro cond_dir(flag, val, target) { if (flag == val) goto target; }
+macro cond_ind(flag, val, target) { if (flag != val) goto inst_next; goto [target]; }
+macro cond_ret(flag, val)         { if (flag != val) goto inst_next; return [x]; }
+
+# Direct call
+:bsr      branch_addr       is f_opc=9 & f_reg=3 & branch_addr {
+    x = inst_next >> 1;
+    call branch_addr;
 }
 
-:bra branch_addr is f_opc=0xe & f_reg=0 & branch_addr {
-    goto branch_addr;
+# Indirect call
+:bsr      braddr_ind        is f_opc=9 & f_reg=3 & braddr_ind  {
+    x = inst_next >> 1;
+    call [braddr_ind];
 }
 
-:bra braddr_ind is f_opc=0xe & f_reg=0 & braddr_ind {
-    goto [braddr_ind];
+with : f_opc=0xe & f_reg=0 {
+    :bra  branch_addr       is branch_addr                     { goto branch_addr; }
+    :bra  braddr_ind        is braddr_ind                      { goto [braddr_ind]; }
+    :bra  braddr_ind        is braddr_ind & f_mode=3           { return [braddr_ind]; }
+    :rts                    is f_opnd=0   & f_mode=2           { return [x]; }
 }
 
-# Y-relative indirect bra is always a return (return address saved by enter/st xl)
-:bra braddr_ind is f_opc=0xe & f_reg=0 & f_mode=3 & braddr_ind {
-    return [braddr_ind];
+with : f_opc=0xe & f_reg=1 {
+    :blt  branch_addr       is branch_addr                     { cond_dir(s, 1, branch_addr); }
+    :blt  braddr_ind        is braddr_ind                      { cond_ind(s, 1, braddr_ind); }
+    :blt  "0,x"             is f_opnd=0   & f_mode=2           { cond_ret(s, 1); }
 }
 
-:blt branch_addr is f_opc=0xe & f_reg=1 & branch_addr {
-    if (s == 1) goto branch_addr;
+with : f_opc=0xe & f_reg=2 {
+    :bpl  branch_addr       is branch_addr                     { cond_dir(n, 0, branch_addr); }
+    :bpl  braddr_ind        is braddr_ind                      { cond_ind(n, 0, braddr_ind); }
+    :bpl  "0,x"             is f_opnd=0   & f_mode=2           { cond_ret(n, 0); }
 }
 
-:blt braddr_ind is f_opc=0xe & f_reg=1 & braddr_ind {
-    if (s != 1) goto inst_next;
-    goto [braddr_ind];
+with : f_opc=0xe & f_reg=3 {
+    :bmi  branch_addr       is branch_addr                     { cond_dir(n, 1, branch_addr); }
+    :bmi  braddr_ind        is braddr_ind                      { cond_ind(n, 1, braddr_ind); }
+    :bmi  "0,x"             is f_opnd=0   & f_mode=2           { cond_ret(n, 1); }
 }
 
-:bpl branch_addr is f_opc=0xe & f_reg=2 & branch_addr {
-    if (n == 0) goto branch_addr;
+with : f_opc=0xf & f_reg=0 {
+    :bne  branch_addr       is branch_addr                     { cond_dir(z, 0, branch_addr); }
+    :bne  braddr_ind        is braddr_ind                      { cond_ind(z, 0, braddr_ind); }
+    :bne  "0,x"             is f_opnd=0   & f_mode=2           { cond_ret(z, 0); }
 }
 
-:bpl braddr_ind is f_opc=0xe & f_reg=2 & braddr_ind {
-    if (n != 0) goto inst_next;
-    goto [braddr_ind];
+with : f_opc=0xf & f_reg=1 {
+    :beq  branch_addr       is branch_addr                     { cond_dir(z, 1, branch_addr); }
+    :beq  braddr_ind        is braddr_ind                      { cond_ind(z, 1, braddr_ind); }
+    :beq  "0,x"             is f_opnd=0   & f_mode=2           { cond_ret(z, 1); }
 }
 
-
-:bmi branch_addr is f_opc=0xe & f_reg=3 & branch_addr {
-    if (n == 1) goto branch_addr;
+with : f_opc=0xf & f_reg=2 {
+    :bcc  branch_addr       is branch_addr                     { cond_dir(c, 0, branch_addr); }
+    :bcc  braddr_ind        is braddr_ind                      { cond_ind(c, 0, braddr_ind); }
+    :bcc  "0,x"             is f_opnd=0   & f_mode=2           { cond_ret(c, 0); }
 }
 
-:bmi braddr_ind is f_opc=0xe & f_reg=3 & braddr_ind {
-    if (n != 1) goto inst_next;
-    goto [braddr_ind];
+with : f_opc=0xf & f_reg=3 {
+    :bcs  branch_addr       is branch_addr                     { cond_dir(c, 1, branch_addr); }
+    :bcs  braddr_ind        is braddr_ind                      { cond_ind(c, 1, braddr_ind); }
+    :bcs  "0,x"             is f_opnd=0   & f_mode=2           { cond_ret(c, 1); }
 }
 
+:bgt      branch_addr       is f_byte=0x20 & branch_addr       { if ((s == 0) && (z == 0)) goto branch_addr; }
+:bge      branch_addr       is f_byte=0x24 & branch_addr       { if (s == 0) goto branch_addr; }
+:ble      branch_addr       is f_byte=0x28 & branch_addr       { if ((s == 1) || (z == 1)) goto branch_addr; }
+:bcz      branch_addr       is f_byte=0x2C & branch_addr       { if ((c == 1) || (z == 1)) goto branch_addr; }
 
-:bne branch_addr is f_opc=0xf & f_reg=0 & branch_addr {
-    if (z == 0) goto branch_addr;
-}
-
-:bne braddr_ind is f_opc=0xf & f_reg=0 & braddr_ind {
-    if (z != 0) goto inst_next;
-    goto [braddr_ind];
-}
-
-:beq branch_addr is f_opc=0xf & f_reg=1 & branch_addr {
-    if (z == 1) goto branch_addr;
-}
-
-:beq braddr_ind is f_opc=0xf & f_reg=1 & braddr_ind {
-    if (z != 1) goto inst_next;
-    goto [braddr_ind];
-}
-
-:bcc branch_addr is f_opc=0xf & f_reg=2 & branch_addr {
-    if (c == 0) goto branch_addr;
-}
-
-:bcc braddr_ind is f_opc=0xf & f_reg=2 & braddr_ind {
-    if (c != 0) goto inst_next;
-    goto [braddr_ind];
-}
-
-:bcs branch_addr is f_opc=0xf & f_reg=3 & branch_addr {
-    if (c == 1) goto branch_addr;
-}
-
-:bcs braddr_ind is f_opc=0xf & f_reg=3 & braddr_ind {
-    if (c != 1) goto inst_next;
-    goto [braddr_ind];
-}
-
-:enterl imm is f_byte=0x0b & imm {
-    *[mem]:2 (y - 1) = xl;
-    y = y + imm;
-}
-
-:leavel imm is f_byte=0x0f & imm {
-    y = y - imm;
-    xl = *[mem]:2 (y - 1);
-    return [x];
-}
-
-:brxl is f_all=0xfe09 {
+# Computed jump  PC ← PC + xl (signed 16-bit offset)
+:brxl                       is f_all=0xfe09 {
     local dst:3 = (inst_next >> 1) + sext(xl);
     goto [dst];
 }
 
-:bgt branch_addr is f_byte=0x20 & branch_addr {
-    if ((s == 0) && (z == 0)) goto branch_addr;
+# Return from interrupt
+:rti      data              is f_byte=0x0d & data {
+    flags = data;
+    return [x];
 }
 
-:bge branch_addr is f_byte=0x24 & branch_addr {
-    if (s == 0) goto branch_addr;
+## Non-leaf function prologue/epilogue
+:enterl   "#"simm24         is f_byte=0x0b & simm24 {
+    *[mem]:2 (y - 1) = xl;
+    y = y + simm24:2;
 }
 
-:ble branch_addr is f_byte=0x28 & branch_addr {
-    if ((s == 1) || (z == 1)) goto branch_addr;
-}
-
-:bcz branch_addr is f_byte=0x2C & branch_addr {
-    if ((c == 1) || (z == 1)) goto branch_addr;
+:leavel   "#"simm24         is f_byte=0x0f & simm24 {
+    y = y - simm24:2;
+    xl = *[mem]:2 (y - 1);
+    return [x];
 }
