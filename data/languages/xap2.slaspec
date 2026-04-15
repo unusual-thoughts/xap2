@@ -361,6 +361,11 @@ macro shiftflags(value) {
     goto [braddr_ind];
 }
 
+# Y-relative indirect bra is always a return (return address saved by enter/st xl)
+:bra braddr_ind is f_opc=0xe & f_reg=0 & f_mode=3 & braddr_ind {
+    return [braddr_ind];
+}
+
 :blt branch_addr is f_opc=0xe & f_reg=1 & branch_addr {
     if (s == 1) goto branch_addr;
 }
