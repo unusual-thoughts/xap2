@@ -20,6 +20,7 @@ define register offset=0x200 size=2 [s0 s1 s2 s3 s4 s5]; # scratch pseudo-regist
 
 define context contextreg
     ext=(0,15) signed noflow
+    ext_sign=(15,15) noflow
     u=(16,16) noflow
     num_prefix=(17,18) noflow
     _imm=(19,42) signed noflow
@@ -29,6 +30,7 @@ define token opc (16)
     f_all=(0,15)
     f_sopnd=(8,15) signed
     f_opnd=(8,15)
+    f_opsign=(15,15)
     f_opc=(4,7)
     f_ld=(0,3)
     f_st=(0,3)
@@ -347,13 +349,33 @@ with : f_opc=0xf & f_reg=3 {
 }
 
 ## Non-leaf function prologue/epilogue
-:enterl   "#"simm24         is f_byte=0x0b & simm24 {
-    *[mem]:2 (y - 1) = xl;
-    y = y + simm24:2;
+# Small mode: 16 bit return, operand encoded as positive
+with : ext_sign=0 & (num_prefix!=0 | f_opsign=0) {
+    :enter    "#"simm24     is f_byte=0x0b & simm24 {
+        *[mem]:2 (y - 1) = xl;
+        y = y - simm24:2;
+    }
+
+    :leave    "#"simm24     is f_byte=0x0f & simm24 {
+        y = y + simm24:2;
+        xl = *[mem]:2 (y - 1);
+        return [xl];
+    }
 }
 
-:leavel   "#"simm24         is f_byte=0x0f & simm24 {
-    y = y - simm24:2;
-    xl = *[mem]:2 (y - 1);
-    return [x];
+# Large mode: 24 bit return, operand encoded as negative
+abs: val                    is simm24 [ val = -_imm; ]         { export *[const]:2 val; }
+with : ext_sign=1 | (num_prefix=0 & f_opsign=1) {
+    :enterl   "#"abs        is f_byte=0x0b & abs  {
+        *[mem]:2 (y - 1) = xh;
+        *[mem]:2 (y - 2) = xl;
+        y = y - abs;
+    }
+
+    :leavel   "#"abs        is f_byte=0x0f & abs {
+        y = y + abs;
+        xh = *[mem]:2 (y - 1);
+        xl = *[mem]:2 (y - 2);
+        return [x];
+    }
 }
