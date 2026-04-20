@@ -222,18 +222,18 @@
         <oper id="0x41"/>
         <oper id="0x40"/>
         <opprint id="1"/>
-        <context_op i="0" shift="16" mask="0xffff0000">
+        <context_op i="0" shift="15" mask="0xffff8000">
           <plus_exp>
             <mult_exp>
-              <contextfield signbit="true" startbit="0" endbit="15" startbyte="0" endbyte="1" shift="0"/>
+              <contextfield signbit="true" startbit="0" endbit="16" startbyte="0" endbyte="2" shift="7"/>
               <intb val="256"/>
             </mult_exp>
             <operand_exp index="0" table="0x0" ct="0x0"/>
           </plus_exp>
         </context_op>
-        <context_op i="0" shift="13" mask="0x6000">
+        <context_op i="0" shift="12" mask="0x3000">
           <plus_exp>
-            <contextfield signbit="false" startbit="17" endbit="18" startbyte="2" endbyte="2" shift="5"/>
+            <contextfield signbit="false" startbit="18" endbit="19" startbyte="2" endbyte="2" shift="4"/>
             <intb val="1"/>
           </plus_exp>
         </context_op>
@@ -252,7 +252,7 @@
       <constructor parent="0x0" first="1" length="2" source="0" line="121">
         <oper id="0x42"/>
         <opprint id="0"/>
-        <context_op i="0" shift="15" mask="0x8000">
+        <context_op i="0" shift="14" mask="0x4000">
           <intb val="1"/>
         </context_op>
         <construct_tpl>
@@ -10781,7 +10781,7 @@
                 <combine_pat>
                   <context_pat>
                     <pat_block off="2" nonzero="1">
-                      <mask_word mask="0x60000000" val="0x0"/>
+                      <mask_word mask="0x30000000" val="0x0"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -10868,15 +10868,15 @@
             <decision number="0" context="false" startbit="0" size="0"/>
             <decision number="0" context="false" startbit="0" size="0"/>
           </decision>
-          <decision number="7" context="true" startbit="15" size="1">
-            <decision number="6" context="true" startbit="17" size="2">
+          <decision number="7" context="true" startbit="16" size="1">
+            <decision number="6" context="true" startbit="18" size="2">
               <decision number="3" context="false" startbit="8" size="1">
                 <decision number="2" context="false" startbit="0" size="0">
                   <pair id="66">
                     <combine_pat>
                       <context_pat>
-                        <pat_block off="1" nonzero="1">
-                        <mask_word mask="0x1000000" val="0x0"/>
+                        <pat_block off="2" nonzero="1">
+                        <mask_word mask="0x80000000" val="0x0"/>
                         </pat_block>
                       </context_pat>
                       <instruct_pat>
@@ -10899,7 +10899,7 @@
                     <combine_pat>
                       <context_pat>
                         <pat_block off="2" nonzero="1">
-                        <mask_word mask="0x60000000" val="0x0"/>
+                        <mask_word mask="0x30000000" val="0x0"/>
                         </pat_block>
                       </context_pat>
                       <instruct_pat>
@@ -10922,8 +10922,8 @@
                 <pair id="66">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="2">
-                        <mask_word mask="0x1600000" val="0x200000"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0xb0000000" val="0x10000000"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -10936,8 +10936,8 @@
                 <pair id="66">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="1">
-                        <mask_word mask="0x1000000" val="0x0"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0x80000000" val="0x0"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -10959,8 +10959,8 @@
                 <pair id="66">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="2">
-                        <mask_word mask="0x1600000" val="0x400000"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0xb0000000" val="0x20000000"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -10973,8 +10973,8 @@
                 <pair id="66">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="1">
-                        <mask_word mask="0x1000000" val="0x0"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0x80000000" val="0x0"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -10996,8 +10996,8 @@
                 <pair id="66">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="2">
-                        <mask_word mask="0x1600000" val="0x600000"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0xb0000000" val="0x30000000"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -11010,8 +11010,8 @@
                 <pair id="66">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="1">
-                        <mask_word mask="0x1000000" val="0x0"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0x80000000" val="0x0"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -11035,7 +11035,7 @@
                 <combine_pat>
                   <context_pat>
                     <pat_block off="2" nonzero="1">
-                      <mask_word mask="0x60000000" val="0x0"/>
+                      <mask_word mask="0x30000000" val="0x0"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11048,8 +11048,8 @@
               <pair id="68">
                 <combine_pat>
                   <context_pat>
-                    <pat_block off="1" nonzero="1">
-                      <mask_word mask="0x1000000" val="0x1000000"/>
+                    <pat_block off="2" nonzero="1">
+                      <mask_word mask="0x80000000" val="0x80000000"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11118,15 +11118,15 @@
             <decision number="0" context="false" startbit="0" size="0"/>
             <decision number="0" context="false" startbit="0" size="0"/>
           </decision>
-          <decision number="7" context="true" startbit="15" size="1">
-            <decision number="6" context="true" startbit="17" size="2">
+          <decision number="7" context="true" startbit="16" size="1">
+            <decision number="6" context="true" startbit="18" size="2">
               <decision number="3" context="false" startbit="8" size="1">
                 <decision number="2" context="false" startbit="0" size="0">
                   <pair id="67">
                     <combine_pat>
                       <context_pat>
-                        <pat_block off="1" nonzero="1">
-                        <mask_word mask="0x1000000" val="0x0"/>
+                        <pat_block off="2" nonzero="1">
+                        <mask_word mask="0x80000000" val="0x0"/>
                         </pat_block>
                       </context_pat>
                       <instruct_pat>
@@ -11149,7 +11149,7 @@
                     <combine_pat>
                       <context_pat>
                         <pat_block off="2" nonzero="1">
-                        <mask_word mask="0x60000000" val="0x0"/>
+                        <mask_word mask="0x30000000" val="0x0"/>
                         </pat_block>
                       </context_pat>
                       <instruct_pat>
@@ -11172,8 +11172,8 @@
                 <pair id="67">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="2">
-                        <mask_word mask="0x1600000" val="0x200000"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0xb0000000" val="0x10000000"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -11186,8 +11186,8 @@
                 <pair id="67">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="1">
-                        <mask_word mask="0x1000000" val="0x0"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0x80000000" val="0x0"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -11209,8 +11209,8 @@
                 <pair id="67">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="2">
-                        <mask_word mask="0x1600000" val="0x400000"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0xb0000000" val="0x20000000"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -11223,8 +11223,8 @@
                 <pair id="67">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="1">
-                        <mask_word mask="0x1000000" val="0x0"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0x80000000" val="0x0"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -11246,8 +11246,8 @@
                 <pair id="67">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="2">
-                        <mask_word mask="0x1600000" val="0x600000"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0xb0000000" val="0x30000000"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -11260,8 +11260,8 @@
                 <pair id="67">
                   <combine_pat>
                     <context_pat>
-                      <pat_block off="1" nonzero="1">
-                        <mask_word mask="0x1000000" val="0x0"/>
+                      <pat_block off="2" nonzero="1">
+                        <mask_word mask="0x80000000" val="0x0"/>
                       </pat_block>
                     </context_pat>
                     <instruct_pat>
@@ -11285,7 +11285,7 @@
                 <combine_pat>
                   <context_pat>
                     <pat_block off="2" nonzero="1">
-                      <mask_word mask="0x60000000" val="0x0"/>
+                      <mask_word mask="0x30000000" val="0x0"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11298,8 +11298,8 @@
               <pair id="69">
                 <combine_pat>
                   <context_pat>
-                    <pat_block off="1" nonzero="1">
-                      <mask_word mask="0x1000000" val="0x1000000"/>
+                    <pat_block off="2" nonzero="1">
+                      <mask_word mask="0x80000000" val="0x80000000"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11450,13 +11450,13 @@
           </pair>
         </decision>
         <decision number="7" context="false" startbit="4" size="2">
-          <decision number="2" context="true" startbit="16" size="1">
+          <decision number="2" context="true" startbit="17" size="1">
             <decision number="1" context="false" startbit="0" size="0">
               <pair id="24">
                 <combine_pat>
                   <context_pat>
                     <pat_block off="2" nonzero="1">
-                      <mask_word mask="0x80000000" val="0x0"/>
+                      <mask_word mask="0x40000000" val="0x0"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11472,7 +11472,7 @@
                 <combine_pat>
                   <context_pat>
                     <pat_block off="2" nonzero="1">
-                      <mask_word mask="0x80000000" val="0x80000000"/>
+                      <mask_word mask="0x40000000" val="0x40000000"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11484,13 +11484,13 @@
               </pair>
             </decision>
           </decision>
-          <decision number="2" context="true" startbit="16" size="1">
+          <decision number="2" context="true" startbit="17" size="1">
             <decision number="1" context="false" startbit="0" size="0">
               <pair id="26">
                 <combine_pat>
                   <context_pat>
                     <pat_block off="2" nonzero="1">
-                      <mask_word mask="0x80000000" val="0x0"/>
+                      <mask_word mask="0x40000000" val="0x0"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11506,7 +11506,7 @@
                 <combine_pat>
                   <context_pat>
                     <pat_block off="2" nonzero="1">
-                      <mask_word mask="0x80000000" val="0x80000000"/>
+                      <mask_word mask="0x40000000" val="0x40000000"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11558,13 +11558,13 @@
               </instruct_pat>
             </pair>
           </decision>
-          <decision number="2" context="true" startbit="16" size="1">
+          <decision number="2" context="true" startbit="17" size="1">
             <decision number="1" context="false" startbit="0" size="0">
               <pair id="29">
                 <combine_pat>
                   <context_pat>
                     <pat_block off="2" nonzero="1">
-                      <mask_word mask="0x80000000" val="0x0"/>
+                      <mask_word mask="0x40000000" val="0x0"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11580,7 +11580,7 @@
                 <combine_pat>
                   <context_pat>
                     <pat_block off="2" nonzero="1">
-                      <mask_word mask="0x80000000" val="0x80000000"/>
+                      <mask_word mask="0x40000000" val="0x40000000"/>
                     </pat_block>
                   </context_pat>
                   <instruct_pat>
@@ -11963,19 +11963,19 @@
     <userop id="0x20" index="1"/>
     <userop id="0x21" index="2"/>
     <userop id="0x22" index="3"/>
-    <context_sym id="0x23" varnode="0xd" low="0" high="15" flow="false">
-      <contextfield signbit="true" startbit="0" endbit="15" startbyte="0" endbyte="1" shift="0"/>
+    <context_sym id="0x23" varnode="0xd" low="0" high="16" flow="false">
+      <contextfield signbit="true" startbit="0" endbit="16" startbyte="0" endbyte="2" shift="7"/>
     </context_sym>
-    <context_sym id="0x24" varnode="0xd" low="15" high="15" flow="false">
-      <contextfield signbit="false" startbit="15" endbit="15" startbyte="1" endbyte="1" shift="0"/>
-    </context_sym>
-    <context_sym id="0x25" varnode="0xd" low="16" high="16" flow="false">
+    <context_sym id="0x24" varnode="0xd" low="16" high="16" flow="false">
       <contextfield signbit="false" startbit="16" endbit="16" startbyte="2" endbyte="2" shift="7"/>
     </context_sym>
-    <context_sym id="0x26" varnode="0xd" low="17" high="18" flow="false">
-      <contextfield signbit="false" startbit="17" endbit="18" startbyte="2" endbyte="2" shift="5"/>
+    <context_sym id="0x25" varnode="0xd" low="17" high="17" flow="false">
+      <contextfield signbit="false" startbit="17" endbit="17" startbyte="2" endbyte="2" shift="6"/>
     </context_sym>
-    <context_sym id="0x27" varnode="0xd" low="19" high="42" flow="false">
+    <context_sym id="0x26" varnode="0xd" low="18" high="19" flow="false">
+      <contextfield signbit="false" startbit="18" endbit="19" startbyte="2" endbyte="2" shift="4"/>
+    </context_sym>
+    <context_sym id="0x27" varnode="0xd" low="20" high="43" flow="false">
       <contextfield signbit="true" startbit="32" endbit="55" startbyte="4" endbyte="6" shift="0"/>
     </context_sym>
     <subtable_sym id="0x28" numct="1">
@@ -12019,7 +12019,7 @@
     </operand_sym>
     <operand_sym id="0x2a" off="0" base="-1" minlen="0" index="0">
       <operand_exp index="0" table="0x28" ct="0x0"/>
-      <contextfield signbit="true" startbit="0" endbit="15" startbyte="0" endbyte="1" shift="0"/>
+      <contextfield signbit="true" startbit="0" endbit="16" startbyte="0" endbyte="2" shift="7"/>
     </operand_sym>
     <operand_sym id="0x2b" off="0" base="-1" minlen="2" index="1">
       <operand_exp index="1" table="0x28" ct="0x0"/>
@@ -12779,7 +12779,7 @@
     </operand_sym>
     <operand_sym id="0x39" off="0" base="-1" minlen="0" index="0">
       <operand_exp index="0" table="0x37" ct="0x0"/>
-      <contextfield signbit="false" startbit="17" endbit="18" startbyte="2" endbyte="2" shift="5"/>
+      <contextfield signbit="false" startbit="18" endbit="19" startbyte="2" endbyte="2" shift="4"/>
     </operand_sym>
     <operand_sym id="0x3a" subsym="0x28" off="0" base="-1" minlen="2" index="1">
       <operand_exp index="1" table="0x37" ct="0x0"/>

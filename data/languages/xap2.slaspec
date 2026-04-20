@@ -19,11 +19,11 @@ define register offset=0x100 size=8 contextreg;
 define register offset=0x200 size=2 [s0 s1 s2 s3 s4 s5]; # scratch pseudo-registers
 
 define context contextreg
-    ext=(0,15) signed noflow
-    ext_sign=(15,15) noflow
-    u=(16,16) noflow
-    num_prefix=(17,18) noflow
-    _imm=(19,42) signed noflow
+    ext=(0,16) signed noflow       # 17-bit signed: covers worst-case -128*256+(-128)=-32896
+    ext_sign=(16,16) noflow
+    u=(17,17) noflow
+    num_prefix=(18,19) noflow
+    _imm=(20,43) signed noflow     # internal: assembled signed immediate (subtable simm24 is the public name)
 ;
 
 define token opc (16)
